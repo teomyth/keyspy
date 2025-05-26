@@ -7,6 +7,7 @@ import {IGlobalKeyDownMap} from "./ts/_types/IGlobalKeyDownMap";
 import {IGlobalKeyListener} from "./ts/_types/IGlobalKeyListener";
 import {IGlobalKeyListenerRaw} from "./ts/_types/IGlobalKeyListenerRaw";
 import {IGlobalKeyServer} from "./ts/_types/IGlobalKeyServer";
+import { IGlobalKeyResult } from "./ts/_types/IGlobalKeyResult";
 
 export * from "./ts/_types/IGlobalKeyListener";
 export * from "./ts/_types/IGlobalKeyEvent";
@@ -14,6 +15,7 @@ export * from "./ts/_types/IGlobalKey";
 export * from "./ts/_types/IGlobalKeyDownMap";
 export * from "./ts/_types/IWindowsConfig";
 export * from "./ts/_types/IConfig";
+export * from "./ts/_types/IGlobalKeyResult";
 
 /**
  * A cross-platform global keyboard listener. Ideal for setting up global keyboard shortcuts
