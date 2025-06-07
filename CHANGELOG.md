@@ -1,5 +1,7 @@
 
 
+* fix: ensure binaries upload to correct GitHub release (541cdec)
+
 * fix: improve cross-platform compilation scripts (478ba51)
 
 # 1.0.0 (2025-06-07)
