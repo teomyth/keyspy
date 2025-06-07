@@ -4,11 +4,11 @@
  * If you want to halt propagation within LaunchMenu you can also return an object containing `stopImmediatePropagation:true`.
  */
 export type IGlobalKeyResult =
-    | boolean
-    | void
-    | {
-          /** True - stops propagation to other remote processes. False - allow propagation to other remote processes */
-          stopPropagation?: boolean;
-          /** True - stops propagation of event within key server. False - allow propagation of events within the keyserver */
-          stopImmediatePropagation?: boolean;
-      };
+  | boolean
+  | undefined
+  | {
+      /** True - stops propagation to other remote processes. False - allow propagation to other remote processes */
+      stopPropagation?: boolean;
+      /** True - stops propagation of event within key server. False - allow propagation of events within the keyserver */
+      stopImmediatePropagation?: boolean;
+    };

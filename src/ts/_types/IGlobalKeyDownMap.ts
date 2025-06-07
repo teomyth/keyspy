@@ -1,5 +1,5 @@
-import {IGlobalKey} from "./IGlobalKey";
+import type { IGlobalKey } from "./IGlobalKey";
 
 export type IGlobalKeyDownMap = {
-    [K in IGlobalKey]?: boolean;
+  [K in IGlobalKey]?: boolean;
 };

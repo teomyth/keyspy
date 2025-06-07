@@ -1,179 +1,173 @@
-import {IGlobalKeyServer} from "./_types/IGlobalKeyServer";
-import {ChildProcess, execFile} from "child_process";
-import {IGlobalKeyListenerRaw} from "./_types/IGlobalKeyListenerRaw";
-import {IGlobalKeyEvent} from "./_types/IGlobalKeyEvent";
-import {MacGlobalKeyLookup} from "./_data/MacGlobalKeyLookup";
-import Path from "path";
-import {IMacConfig} from "./_types/IMacConfig";
+import type { IGlobalKeyServer } from "./_types/IGlobalKeyServer";
+import { type ChildProcess, execFile } from "node:child_process";
+import type { IGlobalKeyListenerRaw } from "./_types/IGlobalKeyListenerRaw";
+import type { IGlobalKeyEvent } from "./_types/IGlobalKeyEvent";
+import { MacGlobalKeyLookup } from "./_data/MacGlobalKeyLookup";
+import Path from "node:path";
+import type { IMacConfig } from "./_types/IMacConfig";
 import sudo from "sudo-prompt";
-import {isSpawnEventSupported} from "./isSpawnEventSupported";
+import { isSpawnEventSupported } from "./isSpawnEventSupported";
 const sPath = "../../bin/MacKeyServer";
 
 /** Use this class to listen to key events on Mac OS */
 export class MacKeyServer implements IGlobalKeyServer {
-    protected listener: IGlobalKeyListenerRaw;
-    private proc: ChildProcess;
-    private config: IMacConfig;
+  protected listener: IGlobalKeyListenerRaw;
+  private proc: ChildProcess;
+  private config: IMacConfig;
 
-    private running = false;
-    private restarting = false;
+  private running = false;
+  private restarting = false;
 
-    /**
-     * Creates a new key server for mac
-     * @param listener The callback to report key events to
-     * @param config Additional optional configuration for the server
-     */
-    constructor(listener: IGlobalKeyListenerRaw, config: IMacConfig = {}) {
-        this.listener = listener;
-        this.config = config;
-    }
+  /**
+   * Creates a new key server for mac
+   * @param listener The callback to report key events to
+   * @param config Additional optional configuration for the server
+   */
+  constructor(listener: IGlobalKeyListenerRaw, config: IMacConfig = {}) {
+    this.listener = listener;
+    this.config = config;
+  }
 
-    /**
-     * Start the Key server and listen for keypresses
-     * @param skipPerms Whether to skip attempting to add permissions
-     */
-    public start(skipPerms?: boolean): Promise<void> {
-        this.running = true;
+  /**
+   * Start the Key server and listen for keypresses
+   * @param skipPerms Whether to skip attempting to add permissions
+   */
+  public start(skipPerms?: boolean): Promise<void> {
+    this.running = true;
 
-        const serverPath = this.config.serverPath || Path.join(__dirname, sPath);
+    const serverPath = this.config.serverPath || Path.join(__dirname, sPath);
 
-        this.proc = execFile(serverPath);
-        if (this.config.onInfo)
-            this.proc.stderr!.on("data", data => this.config.onInfo?.(data.toString()));
-        const onError = this.config.onError;
-        if (onError)
-            this.proc.on("close", code => {
-                if (!this.restarting && this.running) onError(code);
-            });
+    this.proc = execFile(serverPath);
+    if (this.config.onInfo)
+      this.proc.stderr?.on("data", (data) => this.config.onInfo?.(data.toString()));
+    const onError = this.config.onError;
+    if (onError)
+      this.proc.on("close", (code) => {
+        if (!this.restarting && this.running) onError(code);
+      });
 
-        this.proc.stdout!.on("data", data => {
-            const events = this._getEventData(data);
-            for (let {event, eventId} of events) {
-                const stopPropagation = !!this.listener(event);
+    this.proc.stdout?.on("data", (data) => {
+      const events = this._getEventData(data);
+      for (const { event, eventId } of events) {
+        const stopPropagation = !!this.listener(event);
 
-                this.proc.stdin!.write(`${stopPropagation ? "1" : "0"},${eventId}\n`);
+        this.proc.stdin?.write(`${stopPropagation ? "1" : "0"},${eventId}\n`);
+      }
+    });
+
+    return this.handleStartup(skipPerms ?? false);
+  }
+
+  /**
+   * Deals with the startup process of the server, possibly adding perms if required and restarting
+   * @param skipPerms Whether to skip attempting to add permissions
+   */
+  protected handleStartup(skipPerms: boolean): Promise<void> {
+    return new Promise<void>((res, rej) => {
+      let errored = false;
+      const serverPath = this.config.serverPath || Path.join(__dirname, sPath);
+
+      // If setup fails, try adding permissions
+      this.proc.on("error", async (err) => {
+        errored = true;
+        if (skipPerms) {
+          rej(err);
+        } else {
+          try {
+            this.restarting = true;
+            this.proc.kill();
+            await this.addPerms(serverPath);
+
+            // If the server was stopped in between, just act as if it was started successfully
+            if (!this.running) {
+              res();
+              return;
             }
-        });
 
-        return this.handleStartup(skipPerms ?? false);
-    }
+            res(this.start(true));
+          } catch (e) {
+            rej(e);
+          } finally {
+            this.restarting = false;
+          }
+        }
+      });
 
-    /**
-     * Deals with the startup process of the server, possibly adding perms if required and restarting
-     * @param skipPerms Whether to skip attempting to add permissions
-     */
-    protected handleStartup(skipPerms: boolean): Promise<void> {
-        return new Promise<void>((res, rej) => {
-            let errored = false;
-            const serverPath = this.config.serverPath || Path.join(__dirname, sPath);
+      if (isSpawnEventSupported()) this.proc.on("spawn", res);
+      // A timed fallback if the spawn event is not supported
+      else
+        setTimeout(() => {
+          if (!errored) res();
+        }, 200);
+    });
+  }
 
-            // If setup fails, try adding permissions
-            this.proc.on("error", async err => {
-                errored = true;
-                if (skipPerms) {
-                    rej(err);
-                } else {
-                    try {
-                        this.restarting = true;
-                        this.proc.kill();
-                        await this.addPerms(serverPath);
+  /**
+   * Makes sure that the given path is executable
+   * @param path The path to add the perms to
+   */
+  protected addPerms(path: string): Promise<void> {
+    const options = {
+      name: "Global key listener",
+    };
+    return new Promise((res, err) => {
+      sudo.exec(`chmod +x "${path}"`, options, (error, _stdout, stderr) => {
+        if (error) {
+          err(error);
+          return;
+        }
+        if (stderr) {
+          err(stderr);
+          return;
+        }
+        res();
+      });
+    });
+  }
 
-                        // If the server was stopped in between, just act as if it was started successfully
-                        if (!this.running) {
-                            res();
-                            return;
-                        }
+  /** Stop the Key server */
+  public stop() {
+    this.running = false;
+    this.proc.stdout?.pause();
+    this.proc.kill();
+  }
 
-                        res(this.start(true));
-                    } catch (e) {
-                        rej(e);
-                    } finally {
-                        this.restarting = false;
-                    }
-                }
-            });
+  /**
+   * Obtains a IGlobalKeyEvent from stdout buffer data
+   * @param data Data from stdout
+   * @returns The standardized key event data
+   */
+  protected _getEventData(data: Buffer): { event: IGlobalKeyEvent; eventId: string }[] {
+    const sData: string = data.toString();
+    const lines = sData.trim().split(/\n/);
+    return lines.map((line) => {
+      const lineData = line.replace(/\s+/, "");
 
-            if (isSpawnEventSupported()) this.proc.on("spawn", res);
-            // A timed fallback if the spawn event is not supported
-            else
-                setTimeout(() => {
-                    if (!errored) res();
-                }, 200);
-        });
-    }
+      const [mouseKeyboard, downUp, sKeyCode, sLocationX, sLocationY, eventId] =
+        lineData.split(",");
 
-    /**
-     * Makes sure that the given path is executable
-     * @param path The path to add the perms to
-     */
-    protected addPerms(path: string): Promise<void> {
-        const options = {
-            name: "Global key listener",
-        };
-        return new Promise((res, err) => {
-            sudo.exec(`chmod +x "${path}"`, options, (error, stdout, stderr) => {
-                if (error) {
-                    err(error);
-                    return;
-                }
-                if (stderr) {
-                    err(stderr);
-                    return;
-                }
-                res();
-            });
-        });
-    }
+      const isMouse = mouseKeyboard === "MOUSE";
+      const isDown = downUp === "DOWN";
 
-    /** Stop the Key server */
-    public stop() {
-        this.running = false;
-        this.proc.stdout!.pause();
-        this.proc.kill();
-    }
+      const keyCode = Number.parseInt(sKeyCode, 10);
 
-    /**
-     * Obtains a IGlobalKeyEvent from stdout buffer data
-     * @param data Data from stdout
-     * @returns The standardized key event data
-     */
-    protected _getEventData(data: Buffer): {event: IGlobalKeyEvent; eventId: string}[] {
-        const sData: string = data.toString();
-        const lines = sData.trim().split(/\n/);
-        return lines.map(line => {
-            const lineData = line.replace(/\s+/, "");
+      const locationX = Number.parseFloat(sLocationX);
+      const locationY = Number.parseFloat(sLocationY);
 
-            const [
-                mouseKeyboard,
-                downUp,
-                sKeyCode,
-                sLocationX,
-                sLocationY,
-                eventId,
-            ] = lineData.split(",");
+      const key = MacGlobalKeyLookup[isMouse ? 0xffff0000 + keyCode : keyCode];
 
-            const isMouse = mouseKeyboard === 'MOUSE';
-            const isDown = downUp === 'DOWN';
-
-            const keyCode = Number.parseInt(sKeyCode, 10);
-
-            const locationX = Number.parseFloat(sLocationX);
-            const locationY = Number.parseFloat(sLocationY);
-
-            const key = MacGlobalKeyLookup[isMouse ? (0xFFFF0000 + keyCode) : keyCode];
-
-            return {
-                event: {
-                    vKey: keyCode,
-                    rawKey: key,
-                    name: key?.standardName,
-                    state: isDown ? "DOWN" : "UP",
-                    scanCode: keyCode,
-                    location: [ locationX, locationY ],
-                    _raw: sData,
-                },
-                eventId,
-            };
-        });
-    }
+      return {
+        event: {
+          vKey: keyCode,
+          rawKey: key,
+          name: key?.standardName,
+          state: isDown ? "DOWN" : "UP",
+          scanCode: keyCode,
+          location: [locationX, locationY],
+          _raw: sData,
+        },
+        eventId,
+      };
+    });
+  }
 }

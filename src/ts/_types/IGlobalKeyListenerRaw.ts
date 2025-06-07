@@ -1,4 +1,4 @@
-import {IGlobalKeyEvent} from "./IGlobalKeyEvent";
+import type { IGlobalKeyEvent } from "./IGlobalKeyEvent";
 
 /**
  * The signature of a global key listener
