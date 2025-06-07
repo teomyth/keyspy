@@ -7,12 +7,7 @@
     "addUntrackedFiles": false
   },
   "github": {
-    "release": true,
-    "releaseName": "Release v${version}",
-    "releaseNotes": null,
-    "autoGenerate": true,
-    "draft": false,
-    "preRelease": false
+    "release": false
   },
   "npm": {
     "publish": true,
@@ -24,7 +19,7 @@
     "before:init": ["pnpm run lint"],
     "after:bump": ["pnpm run build"],
     "before:release": "pnpm run build",
-    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}. Binaries will be built by GitHub Actions."
+    "after:release": "echo Successfully released ${name} v${version} to NPM. GitHub Release and binaries will be created by GitHub Actions."
   },
   "plugins": {
     "@release-it/conventional-changelog": {

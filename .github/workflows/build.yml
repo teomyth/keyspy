@@ -5,8 +5,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -90,12 +91,12 @@ jobs:
           path: ${{ matrix.binary }}
           retention-days: 30
 
-  package-binaries:
-    name: Package Binaries for Release
+  create-release:
+    name: Create GitHub Release and Upload Binaries
     needs: build
     runs-on: ubuntu-latest
-    # Only run when triggered by a release event (when release-it creates a release)
-    if: github.event_name == 'release'
+    # Only run when a version tag is pushed
+    if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - name: Checkout code
@@ -129,16 +130,37 @@ jobs:
           echo "📦 Packaged releases:"
           ls -la releases/
 
-      - name: Upload release assets
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release and Upload Binaries
         uses: softprops/action-gh-release@v1
         with:
-          # Explicitly specify the tag to ensure we upload to the correct release
-          tag_name: ${{ github.event.release.tag_name }}
+          tag_name: ${{ steps.version.outputs.VERSION }}
+          name: Release ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## Changes
+            See [CHANGELOG.md](https://github.com/teomyth/keyspy/blob/main/CHANGELOG.md) for details.
+
+            ## Installation
+            ```bash
+            npm install keyspy
+            ```
+
+            ## Platform Support
+            - ✅ macOS (ARM64 + x86_64 Universal Binary)
+            - ✅ Linux (x86_64)
+            - ✅ Windows (x86_64)
+
+            Binaries are automatically downloaded during installation.
           files: |
             releases/keyspy-darwin-arm64.tar.gz
             releases/keyspy-darwin-x64.tar.gz
             releases/keyspy-linux-x64.tar.gz
             releases/keyspy-win32-x64.tar.gz
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
