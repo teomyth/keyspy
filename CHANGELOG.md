@@ -1,5 +1,7 @@
 
 
+## [1.0.3](https://github.com/teomyth/keyspy/compare/v1.0.2...v1.0.3) (2025-06-07)
+
 * fix: ensure binaries upload to correct GitHub release (541cdec)
 
 * fix: improve cross-platform compilation scripts (478ba51)
