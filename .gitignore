@@ -120,11 +120,8 @@ dist/
 # Legacy files
 eslintLog.tap
 
-# Test reports and coverage
-test-reports/
+# Test results and coverage
 coverage/
-*.lcov
-junit.xml
 test-results/
 
 # Turbo

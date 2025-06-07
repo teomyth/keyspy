@@ -1,8 +1,3 @@
-const os = require("node:os");
-
-const platform = os.platform();
-const platformDir = platform === "darwin" ? "macos" : platform === "win32" ? "windows" : "linux";
-
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
@@ -18,8 +13,16 @@ module.exports = {
     "!src/examples/**",
     "!src/ts/_tests/**",
   ],
-  coverageDirectory: `test-reports/${platformDir}/coverage`,
-  coverageReporters: ["text", "lcov", "html"],
+  coverageDirectory: "coverage",
+  coverageReporters: ["text", "lcov", "html", "json"],
+  coverageThreshold: {
+    global: {
+      branches: 30,
+      functions: 40,
+      lines: 40,
+      statements: 40,
+    },
+  },
   setupFilesAfterEnv: [],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
   testTimeout: 30000,
@@ -28,7 +31,7 @@ module.exports = {
     [
       "jest-junit",
       {
-        outputDirectory: `test-reports/${platformDir}`,
+        outputDirectory: "test-results",
         outputName: "junit.xml",
         classNameTemplate: "{classname}",
         titleTemplate: "{title}",
