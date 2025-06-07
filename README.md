@@ -146,15 +146,40 @@ NodeJS has various packages for listening to keyboard events raised in the opera
 -   Some workarounds used may rarely lead to unexpected functionality, see windows specific implementation of windows key listeners
 -   If installed into an application on Mac explicit permission will be required from the user via Accessibility.
 
-## Developement
+## Development
 
-If modifying the typescript code you will have to run the following command in a terminal in the root directory of this package:
+### Building and Testing
 
+```bash
+# Development
+npm run dev          # Watch mode compilation
+npm run build        # Production build
+npm run build:swift  # Compile Swift binary (macOS)
+npm run build:win    # Compile Windows binary
+npm run build:x11    # Compile Linux binary
+
+# Testing
+npm test             # Run all tests
+npm run test:manual  # Manual interactive testing
+
+# Code Quality
+npm run lint         # Check code quality
+npm run lint:fix     # Auto-fix issues
+npm run format       # Format code
+
+# Cleanup
+npm run clean        # Remove build artifacts
 ```
-npm run watch
+
+### TypeScript Development
+
+If modifying the TypeScript code, run the following command to enable watch mode:
+
+```bash
+npm run dev
 ```
 
-This will cause the application to recompile the typescript whenever the source code is changed. If you are making a change to an application for a single system, please consider adding these changes to both keyboard servers if possible. Generally we will work on both simultaneiously however we know this is not always possible.
+This will recompile the TypeScript whenever source code changes. When making changes to platform-specific code, please consider adding these changes to all keyboard servers if possible.
 
 ### Modifying the compiled binaries
 
@@ -172,20 +197,20 @@ To compile the source code of these applications use the below command line comm
 
 ##### Windows
 
-```
-npm run compile-win
+```bash
+npm run build:win
 ```
 
 ##### Mac
 
-```
-npm run compile-mac
+```bash
+npm run build:swift
 ```
 
 ##### Linux (X11)
 
-```
-npm run compile-x11
+```bash
+npm run build:x11
 ```
 
 ## Notes
