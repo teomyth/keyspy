@@ -1,19 +1,27 @@
-# KeySpy 🕵️
+# keyspy 🕵️
 
 > A powerful, cross-platform keyboard and mouse event listener for Node.js
 
-KeySpy is a modern, lightweight library that provides global keyboard and mouse event monitoring across Windows, macOS, and Linux. Unlike other solutions, KeySpy uses pre-compiled native binaries and a multi-process architecture for maximum stability and compatibility.
+keyspy is a modern, lightweight library that provides global keyboard and mouse event monitoring across Windows, macOS, and Linux. Unlike other solutions, keyspy uses pre-compiled native binaries and a multi-process architecture for maximum stability and compatibility.
+
+## 🚀 Improvements over Original
+
+This project is a modernized version of [node-global-key-listener](https://github.com/LaunchMenu/node-global-key-listener) with significant enhancements:
+
+- **🚀 Zero Setup**: Pre-compiled binaries downloaded automatically, no compilation required
+- **📦 Smaller Package**: Binaries downloaded on-demand (not bundled), reducing package size by ~90%
+- **📱 Universal macOS**: ARM64 + x86_64 universal binaries for all Apple Silicon and Intel Macs
+- **🔄 Modern Stack**: TypeScript, automated testing, and modern development tools
+- **🏗️ Automated Releases**: GitHub Actions handle cross-platform compilation and publishing
 
 ## ✨ Features
 
-- 🌍 **Cross-platform**: Works on Windows, macOS, and Linux (X11)
-- 🚀 **Zero compilation**: Pre-compiled binaries downloaded automatically, no node-gyp required
-- 🔒 **System-level capture**: Can intercept system shortcuts like Ctrl+Alt+Delete, Cmd+Space
+- 🌍 **Cross-platform**: Windows, macOS, and Linux (X11) support
+- 🔒 **System-level capture**: Intercept any key combination, including OS shortcuts
 - 🎯 **Event blocking**: Prevent captured events from reaching other applications
-- 📦 **TypeScript ready**: Full TypeScript support with comprehensive type definitions
-- 🏗️ **Modern architecture**: Multi-process design for enhanced stability
+- 📦 **TypeScript ready**: Full type definitions included
+- 🛡️ **Stable architecture**: Multi-process design prevents crashes
 - ⚡ **High performance**: Optimized native implementations for each platform
-- 📥 **Smart installation**: Automatically downloads platform-specific binaries from GitHub Releases
 
 ## 🔧 Platform Support
 
@@ -106,22 +114,16 @@ keyspy.kill(); // Removes all listeners and stops the key server
 ```bash
 npm install keyspy
 # or
-pnpm add keyspy
-# or
 yarn add keyspy
 ```
 
-**What happens during installation:**
-1. 📦 Downloads the main package (TypeScript code)
-2. 🔍 Detects your platform (Windows/macOS/Linux) and architecture
-3. 📥 Automatically downloads the appropriate pre-compiled binary from GitHub Releases
-4. ✅ Ready to use immediately!
+The package automatically detects your platform and downloads the appropriate pre-compiled binary during installation. No compilation required!
 
-## 🤔 Why KeySpy?
+## 🤔 Why keyspy?
 
-Choosing the right keyboard listener for your Node.js project can be challenging. Here's how KeySpy compares to other popular solutions:
+Choosing the right keyboard listener for your Node.js project can be challenging. Here's how keyspy compares to other popular solutions:
 
-| Feature | Electron globalShortcut | IOHook | **KeySpy** |
+| Feature | Electron globalShortcut | IOHook | **keyspy** |
 |---------|------------------------|--------|------------|
 | **Setup Complexity** | Simple | Complex (node-gyp) | **Simple** |
 | **System Shortcuts** | ❌ Limited | ✅ Full | **✅ Full** |
@@ -131,7 +133,7 @@ Choosing the right keyboard listener for your Node.js project can be challenging
 | **Arbitrary Key Support** | ❌ Limited | ⚠️ Limited | **✅ Full** |
 | **Process Architecture** | In-process | In-process | **Multi-process** |
 
-### 🎯 **KeySpy Advantages**
+### 🎯 **keyspy Advantages**
 
 - **🔧 Zero Setup**: Pre-compiled binaries work out of the box
 - **🌐 Universal**: Compatible with all Node.js versions (14+)
@@ -148,47 +150,54 @@ Choosing the right keyboard listener for your Node.js project can be challenging
 
 ## 🛠️ Development
 
-### Quick Development Setup
-
 ```bash
 # Clone and setup
 git clone https://github.com/teomyth/keyspy.git
 cd keyspy
-pnpm install
+npm install
 
-# Development workflow
-pnpm dev          # Watch mode compilation
-pnpm build        # Production build
-pnpm test         # Run all tests
-pnpm test:manual  # Interactive testing
+# Build native binary for development
+npm run build:native
+
+# Development commands
+npm run dev          # TypeScript watch mode
+npm run build        # Production build
+npm test             # Run all tests
+npm run test:manual  # Interactive testing
 ```
 
 ### Building Native Binaries
 
-KeySpy includes pre-compiled binaries, but you can rebuild them if needed:
+For development, you can rebuild the native binaries:
 
 ```bash
-# Platform-specific builds
-pnpm build:win    # Windows (requires MinGW)
-pnpm build:swift  # macOS (requires Xcode)
-pnpm build:x11    # Linux (requires X11 dev libraries)
+# Auto-detect your platform
+npm run build:native
+
+# Force specific platform
+npm run build:native -- --platform darwin  # macOS (requires Xcode)
+npm run build:native -- --platform linux   # Linux (requires X11 dev libraries)
+npm run build:native -- --platform win32   # Windows (requires MinGW)
+
+# Show detailed build output
+npm run build:native -- --verbose
 ```
 
 ### Code Quality
 
 ```bash
-pnpm lint         # Check code quality with Biome
-pnpm lint:fix     # Auto-fix issues
-pnpm format       # Format code
-pnpm clean        # Remove build artifacts
+npm run lint         # Check code quality with Biome
+npm run lint:fix     # Auto-fix issues
+npm run format       # Format code
+npm run clean        # Remove build artifacts
 ```
 
 ### Testing
 
 ```bash
-pnpm test:unit        # Unit tests
-pnpm test:integration # Integration tests
-pnpm test:manual      # Manual interactive testing
+npm run test:unit        # Unit tests
+npm run test:integration # Integration tests
+npm run test:manual      # Manual interactive testing
 ```
 
 ## 📋 API Reference
@@ -236,36 +245,17 @@ interface IGlobalKeyEvent {
 
 ## 🔧 Troubleshooting
 
-### Binary Download Issues
-
-If the automatic binary download fails during installation:
-
-```bash
-# Option 1: Manual download from GitHub Releases
-# Visit: https://github.com/teomyth/keyspy/releases
-# Download the appropriate file for your platform
-
-# Option 2: Build from source
-npm run build:swift  # macOS
-npm run build:x11    # Linux
-npm run build:win    # Windows
-
-# Option 3: Skip download in CI environments
-export KEYSPY_SKIP_DOWNLOAD=true
-npm install keyspy
-```
-
-### Platform Support
-
-- **macOS**: ARM64 (Apple Silicon) and x64 (Intel) - Universal binary
-- **Linux**: x64 only, requires X11
-- **Windows**: x64 only
-
 ### Common Issues
 
-1. **"Binary not found"**: Run the appropriate build command for your platform
-2. **Permission denied**: Make sure the binary has execute permissions (`chmod +x`)
-3. **Network issues**: Check your internet connection and GitHub access
+1. **Binary download fails**: Visit [GitHub Releases](https://github.com/teomyth/keyspy/releases) to download manually, or build from source with `npm run build:native`
+2. **Permission denied**: Make sure the binary has execute permissions (`chmod +x bin/*`)
+3. **CI environments**: Set `KEYSPY_SKIP_DOWNLOAD=true` to skip binary download
+
+### Platform Requirements
+
+- **macOS**: macOS 10.14+, supports both Intel and Apple Silicon
+- **Linux**: X11 display server, x64 architecture
+- **Windows**: Windows 10+, x64 architecture
 
 ## 🤝 Contributing
 
@@ -280,8 +270,3 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Original concept inspired by [LaunchMenu](https://github.com/LaunchMenu/LaunchMenu)
-- Built with modern tooling: TypeScript, Biome, Jest, and Turbo
