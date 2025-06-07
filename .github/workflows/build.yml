@@ -16,15 +16,15 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            script: build:win
+            platform: win32
             binary: bin/WinKeyServer.exe
             artifact: windows-binary
           - os: macos-latest
-            script: build:swift
+            platform: darwin
             binary: bin/MacKeyServer
             artifact: macos-binary
           - os: ubuntu-latest
-            script: build:x11
+            platform: linux
             binary: bin/X11KeyServer
             artifact: linux-binary
     
@@ -60,7 +60,7 @@ jobs:
           where gcc || echo "GCC not found, installing..."
       
       - name: Build binary
-        run: npm run ${{ matrix.script }}
+        run: npm run build:native -- --platform ${{ matrix.platform }}
       
       - name: Verify binary exists
         run: |

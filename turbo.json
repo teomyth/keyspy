@@ -7,24 +7,34 @@
       "inputs": ["src/**/*.ts", "src/**/*.js", "tsconfig.json", "package.json"],
       "outputs": ["build/**", "dist/**"]
     },
-    "build:swift": {
-      "inputs": ["src/bin/**/*.swift"],
+    "build:native": {
+      "inputs": [
+        "src/bin/**/*",
+        "scripts/build-native.js",
+        "scripts/compile-*.sh",
+        "scripts/compile-*.bat"
+      ],
       "outputs": ["bin/**"]
     },
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "tests/**/*.ts"],
-      "outputs": ["test-reports/**", "coverage/**"]
+      "outputs": ["test-results/**"]
     },
     "test:unit": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "tests/unit/**/*.ts"],
-      "outputs": ["test-reports/**", "coverage/**"]
+      "outputs": ["test-results/**"]
+    },
+    "test:coverage": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "tests/**/*.ts"],
+      "outputs": ["coverage/**", "test-results/**"]
     },
     "test:integration": {
-      "dependsOn": ["build", "build:swift"],
+      "dependsOn": ["build", "build:native"],
       "inputs": ["src/**/*.ts", "tests/integration/**/*.ts", "bin/**"],
-      "outputs": ["test-reports/**"]
+      "outputs": ["test-results/**"]
     },
     "lint": {
       "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],
