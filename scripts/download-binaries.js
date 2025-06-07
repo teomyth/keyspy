@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const { execSync } = require('child_process');
+const fs = require('node:fs');
+const path = require('node:path');
+const https = require('node:https');
+const { execSync } = require('node:child_process');
 
 const packageJson = require('../package.json');
 const version = packageJson.version;
@@ -73,7 +73,9 @@ function downloadFile(url, dest) {
       });
       
       file.on('error', (err) => {
-        fs.unlink(dest, () => {}); // Delete partial file
+        fs.unlink(dest, () => {
+          // Ignore unlink errors - file cleanup is best effort
+        }); // Delete partial file
         reject(err);
       });
     }).on('error', reject);
@@ -85,7 +87,7 @@ function extractTarGz(archivePath, extractDir) {
     // Try using tar command
     execSync(`tar -xzf "${archivePath}" -C "${extractDir}"`, { stdio: 'inherit' });
     return true;
-  } catch (err) {
+  } catch (_err) {
     log('tar command failed, trying alternative extraction...');
     return false;
   }
@@ -150,9 +152,9 @@ async function downloadAndExtract() {
       log('📝 Manual installation options:');
       log('1. Download from: https://github.com/teomyth/keyspy/releases');
       log('2. Build from source:');
-      log(`   - macOS: npm run build:swift`);
-      log(`   - Linux: npm run build:x11`);
-      log(`   - Windows: npm run build:win`);
+      log('   - macOS: npm run build:swift');
+      log('   - Linux: npm run build:x11');
+      log('   - Windows: npm run build:win');
       log('');
       log('⚠️  KeySpy will not work without the platform-specific binary.');
       
