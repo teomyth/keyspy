@@ -94,7 +94,8 @@ jobs:
     name: Package Binaries for Release
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/')
+    # Only run when triggered by a release event (when release-it creates a release)
+    if: github.event_name == 'release'
 
     steps:
       - name: Checkout code
@@ -131,6 +132,8 @@ jobs:
       - name: Upload release assets
         uses: softprops/action-gh-release@v1
         with:
+          # Explicitly specify the tag to ensure we upload to the correct release
+          tag_name: ${{ github.event.release.tag_name }}
           files: |
             releases/keyspy-darwin-arm64.tar.gz
             releases/keyspy-darwin-x64.tar.gz
