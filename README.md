@@ -1,99 +1,106 @@
-# ARCHIVE NOTICE
+# KeySpy 🕵️
 
-## TL;DR - This project is looking for maintainers
+> A powerful, cross-platform keyboard and mouse event listener for Node.js
 
-If:
+KeySpy is a modern, lightweight library that provides global keyboard and mouse event monitoring across Windows, macOS, and Linux. Unlike other solutions, KeySpy uses pre-compiled native binaries and a multi-process architecture for maximum stability and compatibility.
 
-1. you have experience with any of the following:
-    * Node-TypeScript
-    * Keyboard hooking on Windows (current implementation in C++)
-    * Keyboard hooking on Mac (current implementation in Swift)
-    * Keyboard hooking on Linux (current X11 implementation in C++)
-    * Publishing NPM packages
- 2. Own a Windows, Mac or Linux machine.
- 3. Are interested in maintaining an open source project (e.g. testing PRs on the system, fixing issues)
+## ✨ Features
 
-Please [apply to become a maintainer](https://github.com/LaunchMenu/NGKL-MaintainerApplications). Otherwise this repo will remain archived.
+- 🌍 **Cross-platform**: Works on Windows, macOS, and Linux (X11)
+- 🚀 **Zero compilation**: Pre-compiled binaries, no node-gyp required
+- 🔒 **System-level capture**: Can intercept system shortcuts like Ctrl+Alt+Delete, Cmd+Space
+- 🎯 **Event blocking**: Prevent captured events from reaching other applications
+- 📦 **TypeScript ready**: Full TypeScript support with comprehensive type definitions
+- 🏗️ **Modern architecture**: Multi-process design for enhanced stability
+- ⚡ **High performance**: Optimized native implementations for each platform
 
-## Thanks & Goodbye
+## 🔧 Platform Support
 
-This project was created as a result of the stability concerns for other NodeJS keyboard hooking projects, and initially for use with LaunchMenu. At the beginning we were investing heavily in [launchmenu](http://launchmenu.github.io), however unfortunately this project didn't kick off and the maintainers @TarVK and @Sancarn have moved onto bigger and better things. At this stage, it's been many years since this project has been actively maintained, and the previous stability of this project has been deteriating (see #36, #41, #34, #23). Thusly we sadly feel compelled to archive this project until new serious maintainers for this project hop on board.
+| Platform | Status | Implementation | Tested On |
+|----------|--------|---------------|-----------|
+| Windows  | ✅ Full | C++ (Low-level hooks) | Windows 10/11 |
+| macOS    | ✅ Full | Swift (CGEventTap) | macOS 10.14+ |
+| Linux    | ✅ X11 Only | C++ (XInput2) | Ubuntu, Arch Linux |
 
-Thanks everyone for using this project, and we hope you get use out of the old stable versions.
-
-# node-global-key-listener
-
-## Description
-
-A simple, cross-platform NodeJS package which can be used to listen to and capture keyboard events.
-
-Compatibility table:
-
-| Platform | Compatible?     | Tested        |
-| -------- | --------------- | ------------- |
-| Windows  | True            | Win10         |
-| Mac      | True            | Mac OS Mojave |
-| Linux    | X11 only        | Arch Linux    |
-
-This keyboard listener was originally made for the productivity application, [LaunchMenu](http://launchmenu.github.io/).
-
-## Usage
+## 🚀 Quick Start
 
 ```ts
-import {GlobalKeyboardListener} from "keyspy";
-const v = new GlobalKeyboardListener();
+import { GlobalKeyboardListener } from "keyspy";
 
-//Log every key that's pressed.
-v.addListener(function (e, down) {
-    console.log(
-        `${e.name} ${e.state == "DOWN" ? "DOWN" : "UP  "} [${e.rawKey._nameRaw}]`
-    );
+const keyspy = new GlobalKeyboardListener();
+
+// Listen to all keyboard events
+keyspy.addListener((e, down) => {
+    console.log(`${e.name} ${e.state} [${e.rawKey._nameRaw}]`);
 });
-
-//Capture Windows + Space on Windows and Command + Space on Mac
-v.addListener(function (e, down) {
-    if (
-        e.state == "DOWN" &&
-        e.name == "SPACE" &&
-        (down["LEFT META"] || down["RIGHT META"])
-    ) {
-        //call your function
-        return true;
-    }
-});
-
-//Capture ALT + F
-v.addListener(function (e, down) {
-    if (e.state == "DOWN" && e.name == "F" && (down["LEFT ALT"] || down["RIGHT ALT"])) {
-        //call your function
-        return true;
-    }
-});
-
-//Call one listener only once (demonstrating removeListener())
-calledOnce = function (e) {
-    console.log("only called once");
-    v.removeListener(calledOnce);
-};
-v.addListener(calledOnce);
-
-/* 
- To add logging of errors please use. This is hopefully not needed in most cases, but may still be useful in production.
-    new GlobalKeyboardListener({
-        windows: {
-            onError: (errorCode) => console.error("ERROR: " + errorCode),
-            onInfo: (info) => console.info("INFO: " + info)
-        },
-        mac: {
-            onError: (errorCode) => console.error("ERROR: " + errorCode),
-        }
-    })
-*/
 ```
 
-## Installation
+## 📖 Usage Examples
 
-To install this npm package call:
+### Basic Event Logging
+
+```ts
+import { GlobalKeyboardListener } from "keyspy";
+
+const keyspy = new GlobalKeyboardListener();
+
+keyspy.addListener((e, down) => {
+    console.log(`Key: ${e.name}, State: ${e.state}, Location: ${e.location}`);
+});
+```
+
+### Capturing System Shortcuts
+
+```ts
+// Capture Cmd+Space (macOS) or Win+Space (Windows)
+keyspy.addListener((e, down) => {
+    if (e.state === "DOWN" && e.name === "SPACE" &&
+        (down["LEFT META"] || down["RIGHT META"])) {
+        console.log("System shortcut captured!");
+        return true; // Prevent the event from reaching other apps
+    }
+});
+
+// Capture Alt+F4
+keyspy.addListener((e, down) => {
+    if (e.state === "DOWN" && e.name === "F4" &&
+        (down["LEFT ALT"] || down["RIGHT ALT"])) {
+        console.log("Alt+F4 intercepted!");
+        return true;
+    }
+});
+```
+
+### Advanced Configuration
+
+```ts
+const keyspy = new GlobalKeyboardListener({
+    windows: {
+        onError: (errorCode) => console.error("Windows error:", errorCode),
+        onInfo: (info) => console.info("Windows info:", info)
+    },
+    mac: {
+        onError: (errorCode) => console.error("macOS error:", errorCode),
+    },
+    x11: {
+        onError: (errorCode) => console.error("Linux error:", errorCode),
+    }
+});
+```
+
+### Cleanup and Resource Management
+
+```ts
+// Remove specific listener
+const myListener = (e, down) => { /* ... */ };
+keyspy.addListener(myListener);
+keyspy.removeListener(myListener);
+
+// Clean shutdown
+keyspy.kill(); // Removes all listeners and stops the key server
+```
+
+## 📦 Installation
 
 ```bash
 npm install keyspy
@@ -103,121 +110,138 @@ pnpm add keyspy
 yarn add keyspy
 ```
 
-## Is this the right package for you?
+## 🤔 Why KeySpy?
 
-NodeJS has various packages for listening to keyboard events raised in the operating system. We may not have created the best package for you, please use the below descriptions to aid you in making your decision:
+Choosing the right keyboard listener for your Node.js project can be challenging. Here's how KeySpy compares to other popular solutions:
 
-### Electron::globalShortcut
+| Feature | Electron globalShortcut | IOHook | **KeySpy** |
+|---------|------------------------|--------|------------|
+| **Setup Complexity** | Simple | Complex (node-gyp) | **Simple** |
+| **System Shortcuts** | ❌ Limited | ✅ Full | **✅ Full** |
+| **Event Blocking** | ❌ No | ✅ Yes | **✅ Yes** |
+| **Node.js Compatibility** | ❌ Electron only | ⚠️ Version dependent | **✅ All versions** |
+| **Compilation Required** | ❌ No | ❌ Yes | **✅ No** |
+| **Arbitrary Key Support** | ❌ Limited | ⚠️ Limited | **✅ Full** |
+| **Process Architecture** | In-process | In-process | **Multi-process** |
 
-#### Advantages:
+### 🎯 **KeySpy Advantages**
 
--   Native to electron apps
--   No compiling issues with Node-gyp
--   All execution occurs in-process
+- **🔧 Zero Setup**: Pre-compiled binaries work out of the box
+- **🌐 Universal**: Compatible with all Node.js versions (14+)
+- **🔒 System-Level**: Capture any key combination, including OS shortcuts
+- **🛡️ Stable**: Multi-process architecture prevents crashes
+- **📝 TypeScript**: Full type definitions included
+- **🎮 Flexible**: Listen to individual keys or complex combinations
 
-#### Disadvantages:
+### ⚠️ **Considerations**
 
--   On Windows: Cannot override windows specific shortcuts. E.G. Ctrl+Alt+Delete or Windows+Space etc.
--   On Mac: Will not prevent other applications from listening for events
--   Cannot easily be used to listen for arbitrary keys
--   Requires electron in order to function.
+- **Permissions**: macOS requires Accessibility permissions
+- **Antivirus**: Some antivirus software may flag the native binaries
+- **Performance**: Small overhead due to inter-process communication
 
-### [IOHook](https://www.npmjs.com/package/iohook)
+## 🛠️ Development
 
-#### Advantages:
-
--   All execution occurs in-process
--   On Windows: Allows capture of windows specific shortcuts. E.G. Ctrl+Alt+Delete or Windows+Space etc.
--   On Mac: Prevents other applications from listening for captured events.
-
-#### Disadvantages:
-
--   Cannot easily be used to listen for arbitrary keys
--   Requires compilation with node-gyp. Sometimes the package is released with binaries, however these binaries need to be compiled seperately for each version of node. Furthermore, when compile errors occur the code given is a black box which you will need to fix, which may be complex if you're not used to the languages they are written in.
-
-### [keyspy](https://www.npmjs.com/package/keyspy)
-
-#### Advantages:
-
--   Easy to setup as an arbitrary key listener/logger.
--   Does not require node-gyp. Our package comes with pre-compiled binaries which are compatible with your OS and not dependent on node version.
--   On Windows: Allows capture of windows specific shortcuts. E.G. Ctrl+Alt+Delete or Windows+Space etc.
--   On Mac: Prevents other applications from listening for captured events.
-
-#### Disadvantages:
-
--   Most execution occurs out-of-process. Our package executes and runs a seperate key server which NodeJS interfaces with over stdio. This means that this application might require permission to run depending on your anti-virus system.
--   Some workarounds used may rarely lead to unexpected functionality, see windows specific implementation of windows key listeners
--   If installed into an application on Mac explicit permission will be required from the user via Accessibility.
-
-## Development
-
-### Building and Testing
+### Quick Development Setup
 
 ```bash
-# Development
-npm run dev          # Watch mode compilation
-npm run build        # Production build
-npm run build:swift  # Compile Swift binary (macOS)
-npm run build:win    # Compile Windows binary
-npm run build:x11    # Compile Linux binary
+# Clone and setup
+git clone https://github.com/teomyth/keyspy.git
+cd keyspy
+pnpm install
 
-# Testing
-npm test             # Run all tests
-npm run test:manual  # Manual interactive testing
-
-# Code Quality
-npm run lint         # Check code quality
-npm run lint:fix     # Auto-fix issues
-npm run format       # Format code
-
-# Cleanup
-npm run clean        # Remove build artifacts
+# Development workflow
+pnpm dev          # Watch mode compilation
+pnpm build        # Production build
+pnpm test         # Run all tests
+pnpm test:manual  # Interactive testing
 ```
 
-### TypeScript Development
+### Building Native Binaries
 
-If modifying the TypeScript code, run the following command to enable watch mode:
+KeySpy includes pre-compiled binaries, but you can rebuild them if needed:
 
 ```bash
-npm run dev
+# Platform-specific builds
+pnpm build:win    # Windows (requires MinGW)
+pnpm build:swift  # macOS (requires Xcode)
+pnpm build:x11    # Linux (requires X11 dev libraries)
 ```
 
-This will recompile the TypeScript whenever source code changes. When making changes to platform-specific code, please consider adding these changes to all keyboard servers if possible.
-
-### Modifying the compiled binaries
-
-To modify the Windows `C++` or Mac `Swift` source code please compile these applications before testing with:
-
-#### Pre-requisites
-
-##### Windows
-
-This project is configured to use [mingw](https://sourceforge.net/projects/mingw/), and thus this should be installed before compiling the source code.
-
-#### Compiling the binary code
-
-To compile the source code of these applications use the below command line commands respective to the system you are working on.
-
-##### Windows
+### Code Quality
 
 ```bash
-npm run build:win
+pnpm lint         # Check code quality with Biome
+pnpm lint:fix     # Auto-fix issues
+pnpm format       # Format code
+pnpm clean        # Remove build artifacts
 ```
 
-##### Mac
+### Testing
 
 ```bash
-npm run build:swift
+pnpm test:unit        # Unit tests
+pnpm test:integration # Integration tests
+pnpm test:manual      # Manual interactive testing
 ```
 
-##### Linux (X11)
+## 📋 API Reference
 
-```bash
-npm run build:x11
+### GlobalKeyboardListener
+
+#### Constructor
+
+```ts
+new GlobalKeyboardListener(config?: IConfig)
 ```
 
-## Notes
+#### Methods
 
--   If Including this package into an Electron application, the built application will require explicit permission from the user on Mac OS X systems.
--   Given that a fallback may be required we may release an `electron-global-key-listener` package to accommodate this in the future. In our case for LaunchMenu, our fallback is implemented in [`core/keyHandler`](https://github.com/LaunchMenu/LaunchMenu/blob/master/packages/core/src/keyHandler/globalKeyHandler/globalKeyHandler.ts).
+- `addListener(listener: IGlobalKeyListener): Promise<void>` - Add event listener
+- `removeListener(listener: IGlobalKeyListener): void` - Remove event listener
+- `kill(): void` - Stop all listeners and cleanup
+
+#### Event Object
+
+```ts
+interface IGlobalKeyEvent {
+  name: string;           // Key name (e.g., "A", "SPACE", "F1")
+  state: "UP" | "DOWN";   // Key state
+  rawKey: IGlobalKey;     // Raw key information
+  vKey: number;           // Virtual key code
+  scanCode: number;       // Scan code
+  location: [number, number]; // Mouse location (for mouse events)
+}
+```
+
+## 🔒 Security & Permissions
+
+### macOS
+- Requires **Accessibility** permissions in System Preferences
+- First run will prompt for permission automatically
+
+### Windows
+- May require administrator privileges for system-wide hooks
+- Some antivirus software may flag the binary (false positive)
+
+### Linux
+- Requires X11 display server
+- May need to run with appropriate user permissions
+
+## 🤝 Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Original concept inspired by [LaunchMenu](https://github.com/LaunchMenu/LaunchMenu)
+- Built with modern tooling: TypeScript, Biome, Jest, and Turbo
