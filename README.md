@@ -40,7 +40,7 @@ This keyboard listener was originally made for the productivity application, [La
 ## Usage
 
 ```ts
-import {GlobalKeyboardListener} from "node-global-key-listener";
+import {GlobalKeyboardListener} from "keyspy";
 const v = new GlobalKeyboardListener();
 
 //Log every key that's pressed.
@@ -95,8 +95,12 @@ v.addListener(calledOnce);
 
 To install this npm package call:
 
-```
-npm install node-global-key-listener
+```bash
+npm install keyspy
+# or
+pnpm add keyspy
+# or
+yarn add keyspy
 ```
 
 ## Is this the right package for you?
@@ -131,7 +135,7 @@ NodeJS has various packages for listening to keyboard events raised in the opera
 -   Cannot easily be used to listen for arbitrary keys
 -   Requires compilation with node-gyp. Sometimes the package is released with binaries, however these binaries need to be compiled seperately for each version of node. Furthermore, when compile errors occur the code given is a black box which you will need to fix, which may be complex if you're not used to the languages they are written in.
 
-### [node-global-key-listener](https://www.npmjs.com/package/node-global-key-listener)
+### [keyspy](https://www.npmjs.com/package/keyspy)
 
 #### Advantages:
 

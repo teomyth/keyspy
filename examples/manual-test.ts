@@ -1,6 +1,6 @@
 import { GlobalKeyboardListener } from "../src/index";
 
-console.log("=== Node Global Key Listener Manual Test ===");
+console.log("=== KeySpy Manual Test ===");
 console.log("This test will detect all keyboard and mouse events");
 console.log("Press Ctrl+C to exit");
 console.log("Press ESC to exit");

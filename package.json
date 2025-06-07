@@ -1,6 +1,6 @@
 {
-  "name": "node-global-key-listener",
-  "version": "0.3.1",
+  "name": "keyspy",
+  "version": "1.0.0",
   "description": "A cross-platform global keyboard and mouse listener for Node.js",
   "types": "build/index.d.ts",
   "main": "build/index.js",
@@ -32,15 +32,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LaunchMenu/node-global-key-listener.git"
+    "url": "git+https://github.com/teomyth/keyspy.git"
   },
-  "keywords": ["key", "listener", "global", "node"],
-  "author": "Sancarn",
+  "keywords": ["key", "listener", "global", "node", "keyboard", "mouse", "cross-platform", "hook", "spy", "monitor"],
+  "author": "teomyth",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/LaunchMenu/node-global-key-listener/issues"
+    "url": "https://github.com/teomyth/keyspy/issues"
   },
-  "homepage": "https://github.com/LaunchMenu/node-global-key-listener#readme",
+  "homepage": "https://github.com/teomyth/keyspy#readme",
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@release-it/conventional-changelog": "^8.0.2",
