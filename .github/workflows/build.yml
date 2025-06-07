@@ -1,0 +1,183 @@
+name: Build Cross-Platform Binaries
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ created ]
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }} Binary
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: build:win
+            binary: bin/WinKeyServer.exe
+            artifact: windows-binary
+          - os: macos-latest
+            script: build:swift
+            binary: bin/MacKeyServer
+            artifact: macos-binary
+          - os: ubuntu-latest
+            script: build:x11
+            binary: bin/X11KeyServer
+            artifact: linux-binary
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Linux dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-dev libxi-dev build-essential
+      
+      - name: Install Windows dependencies
+        if: matrix.os == 'windows-latest'
+        run: |
+          # MinGW should be available by default on windows-latest
+          where gcc || echo "GCC not found, installing..."
+      
+      - name: Build binary
+        run: npm run ${{ matrix.script }}
+      
+      - name: Verify binary exists
+        run: |
+          if [ -f "${{ matrix.binary }}" ]; then
+            echo "✅ Binary built successfully: ${{ matrix.binary }}"
+            ls -la ${{ matrix.binary }}
+          else
+            echo "❌ Binary not found: ${{ matrix.binary }}"
+            exit 1
+          fi
+        shell: bash
+      
+      - name: Test binary (basic check)
+        if: matrix.os != 'windows-latest'
+        run: |
+          file ${{ matrix.binary }}
+          # For macOS, check if it's a universal binary
+          if [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            lipo -info ${{ matrix.binary }} || echo "Not a fat binary"
+          fi
+        shell: bash
+      
+      - name: Upload binary artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.binary }}
+          retention-days: 30
+
+  collect-binaries:
+    name: Collect All Binaries
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      - name: Copy binaries to bin directory
+        run: |
+          mkdir -p bin/
+          cp artifacts/windows-binary/WinKeyServer.exe bin/
+          cp artifacts/macos-binary/MacKeyServer bin/
+          cp artifacts/linux-binary/X11KeyServer bin/
+          
+          echo "📦 Collected binaries:"
+          ls -la bin/
+      
+      - name: Verify all binaries
+        run: |
+          echo "🔍 Verifying binaries..."
+          for binary in bin/*; do
+            if [ -f "$binary" ]; then
+              echo "✅ $binary exists ($(du -h "$binary" | cut -f1))"
+              file "$binary" || echo "Could not determine file type"
+            else
+              echo "❌ $binary missing"
+              exit 1
+            fi
+          done
+      
+      - name: Commit updated binaries
+        if: github.event_name == 'release'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet bin/; then
+            echo "No changes to binaries"
+          else
+            git add bin/
+            git commit -m "chore: update cross-platform binaries for release ${{ github.event.release.tag_name }}"
+            git push
+          fi
+
+  publish:
+    name: Publish to NPM
+    needs: [build, collect-binaries]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+      
+      - name: Copy binaries for publishing
+        run: |
+          mkdir -p bin/
+          cp artifacts/windows-binary/WinKeyServer.exe bin/
+          cp artifacts/macos-binary/MacKeyServer bin/
+          cp artifacts/linux-binary/X11KeyServer bin/
+      
+      - name: Build TypeScript
+        run: npm run build
+      
+      - name: Run tests
+        run: npm test
+      
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

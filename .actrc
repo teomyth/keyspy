@@ -1,0 +1,9 @@
+# Act configuration for local GitHub Actions testing
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+-P ubuntu-20.04=catthehacker/ubuntu:act-20.04
+-P ubuntu-18.04=catthehacker/ubuntu:act-18.04
+-P windows-latest=catthehacker/ubuntu:act-latest
+-P macos-latest=catthehacker/ubuntu:act-latest
+
+# Use larger runner images for better compatibility
+--container-architecture linux/amd64

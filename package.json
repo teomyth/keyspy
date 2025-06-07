@@ -12,7 +12,7 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "tsc",
-    "build:swift": "swiftc src/bin/MacKeyServer/main.swift -o bin/MacKeyServer",
+    "build:swift": "swiftc -target arm64-apple-macos10.14 src/bin/MacKeyServer/main.swift -o bin/MacKeyServer-arm64 && swiftc -target x86_64-apple-macos10.14 src/bin/MacKeyServer/main.swift -o bin/MacKeyServer-x86_64 && lipo -create bin/MacKeyServer-arm64 bin/MacKeyServer-x86_64 -output bin/MacKeyServer && rm bin/MacKeyServer-arm64 bin/MacKeyServer-x86_64",
     "build:mac": "swiftc src/bin/MacKeyServer/main.swift -o bin/MacKeyServer",
     "build:win": ".\\scripts\\compile-win.bat",
     "build:x11": "scripts/compile-x11.sh",
