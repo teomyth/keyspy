@@ -146,3 +146,9 @@ CHANGELOG.md
 # Temporary files
 *.tmp
 *.temp
+
+# Downloaded binaries (will be downloaded during postinstall)
+bin/MacKeyServer
+bin/X11KeyServer
+bin/WinKeyServer.exe
+bin/*.tar.gz

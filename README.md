@@ -7,12 +7,13 @@ KeySpy is a modern, lightweight library that provides global keyboard and mouse 
 ## ✨ Features
 
 - 🌍 **Cross-platform**: Works on Windows, macOS, and Linux (X11)
-- 🚀 **Zero compilation**: Pre-compiled binaries, no node-gyp required
+- 🚀 **Zero compilation**: Pre-compiled binaries downloaded automatically, no node-gyp required
 - 🔒 **System-level capture**: Can intercept system shortcuts like Ctrl+Alt+Delete, Cmd+Space
 - 🎯 **Event blocking**: Prevent captured events from reaching other applications
 - 📦 **TypeScript ready**: Full TypeScript support with comprehensive type definitions
 - 🏗️ **Modern architecture**: Multi-process design for enhanced stability
 - ⚡ **High performance**: Optimized native implementations for each platform
+- 📥 **Smart installation**: Automatically downloads platform-specific binaries from GitHub Releases
 
 ## 🔧 Platform Support
 
@@ -109,6 +110,12 @@ pnpm add keyspy
 # or
 yarn add keyspy
 ```
+
+**What happens during installation:**
+1. 📦 Downloads the main package (TypeScript code)
+2. 🔍 Detects your platform (Windows/macOS/Linux) and architecture
+3. 📥 Automatically downloads the appropriate pre-compiled binary from GitHub Releases
+4. ✅ Ready to use immediately!
 
 ## 🤔 Why KeySpy?
 
@@ -226,6 +233,39 @@ interface IGlobalKeyEvent {
 ### Linux
 - Requires X11 display server
 - May need to run with appropriate user permissions
+
+## 🔧 Troubleshooting
+
+### Binary Download Issues
+
+If the automatic binary download fails during installation:
+
+```bash
+# Option 1: Manual download from GitHub Releases
+# Visit: https://github.com/teomyth/keyspy/releases
+# Download the appropriate file for your platform
+
+# Option 2: Build from source
+npm run build:swift  # macOS
+npm run build:x11    # Linux
+npm run build:win    # Windows
+
+# Option 3: Skip download in CI environments
+export KEYSPY_SKIP_DOWNLOAD=true
+npm install keyspy
+```
+
+### Platform Support
+
+- **macOS**: ARM64 (Apple Silicon) and x64 (Intel) - Universal binary
+- **Linux**: x64 only, requires X11
+- **Windows**: x64 only
+
+### Common Issues
+
+1. **"Binary not found"**: Run the appropriate build command for your platform
+2. **Permission denied**: Make sure the binary has execute permissions (`chmod +x`)
+3. **Network issues**: Check your internet connection and GitHub access
 
 ## 🤝 Contributing
 

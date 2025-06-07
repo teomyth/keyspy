@@ -86,97 +86,82 @@ jobs:
           path: ${{ matrix.binary }}
           retention-days: 30
 
-  collect-binaries:
-    name: Collect All Binaries
+  package-binaries:
+    name: Package Binaries for Release
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'release' || github.ref == 'refs/heads/main'
-    
+    if: github.event_name == 'release'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
-      
-      - name: Copy binaries to bin directory
+
+      - name: Package binaries
         run: |
-          mkdir -p bin/
-          cp artifacts/windows-binary/WinKeyServer.exe bin/
-          cp artifacts/macos-binary/MacKeyServer bin/
-          cp artifacts/linux-binary/X11KeyServer bin/
-          
-          echo "📦 Collected binaries:"
-          ls -la bin/
-      
-      - name: Verify all binaries
-        run: |
-          echo "🔍 Verifying binaries..."
-          for binary in bin/*; do
-            if [ -f "$binary" ]; then
-              echo "✅ $binary exists ($(du -h "$binary" | cut -f1))"
-              file "$binary" || echo "Could not determine file type"
-            else
-              echo "❌ $binary missing"
-              exit 1
-            fi
-          done
-      
-      - name: Commit updated binaries
-        if: github.event_name == 'release'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
-          if git diff --quiet bin/; then
-            echo "No changes to binaries"
-          else
-            git add bin/
-            git commit -m "chore: update cross-platform binaries for release ${{ github.event.release.tag_name }}"
-            git push
-          fi
+          mkdir -p releases/
+
+          # Package macOS binary (universal)
+          cd artifacts/macos-binary/
+          tar -czf ../../releases/keyspy-darwin-arm64.tar.gz MacKeyServer
+          tar -czf ../../releases/keyspy-darwin-x64.tar.gz MacKeyServer
+          cd ../../
+
+          # Package Linux binary
+          cd artifacts/linux-binary/
+          tar -czf ../../releases/keyspy-linux-x64.tar.gz X11KeyServer
+          cd ../../
+
+          # Package Windows binary
+          cd artifacts/windows-binary/
+          tar -czf ../../releases/keyspy-win32-x64.tar.gz WinKeyServer.exe
+          cd ../../
+
+          echo "📦 Packaged releases:"
+          ls -la releases/
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            releases/keyspy-darwin-arm64.tar.gz
+            releases/keyspy-darwin-x64.tar.gz
+            releases/keyspy-linux-x64.tar.gz
+            releases/keyspy-win32-x64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     name: Publish to NPM
-    needs: [build, collect-binaries]
+    needs: [build, package-binaries]
     runs-on: ubuntu-latest
     if: github.event_name == 'release'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
-      
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts/
-      
-      - name: Copy binaries for publishing
-        run: |
-          mkdir -p bin/
-          cp artifacts/windows-binary/WinKeyServer.exe bin/
-          cp artifacts/macos-binary/MacKeyServer bin/
-          cp artifacts/linux-binary/X11KeyServer bin/
-      
+
       - name: Build TypeScript
         run: npm run build
-      
-      - name: Run tests
+
+      - name: Run tests (skip binary-dependent tests)
         run: npm test
-      
+        env:
+          KEYSPY_SKIP_DOWNLOAD: true
+
       - name: Publish to NPM
         run: npm publish
         env:
