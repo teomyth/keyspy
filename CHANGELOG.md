@@ -1,5 +1,13 @@
 
 
+## [1.0.5](https://github.com/teomyth/keyspy/compare/v1.0.4...v1.0.5) (2025-06-07)
+
+
+### Features
+
+* add intelligent cross-platform build system ([f77aeab](https://github.com/teomyth/keyspy/commit/f77aeabed447fec75f5b6b768a83470646e9afb0))
+* add simplified version release scripts ([8865d88](https://github.com/teomyth/keyspy/commit/8865d884e392fc2829492806fce7d541db79d919))
+
 * fix: correct YAML syntax in GitHub Actions workflow (e28e6bc)
 
 ## [1.0.3](https://github.com/teomyth/keyspy/compare/v1.0.2...v1.0.3) (2025-06-07)
