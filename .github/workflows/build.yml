@@ -90,7 +90,7 @@ jobs:
     name: Package Binaries for Release
     needs: build
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Checkout code
@@ -135,34 +135,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish:
-    name: Publish to NPM
-    needs: [build, package-binaries]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build TypeScript
-        run: npm run build
-
-      - name: Run tests (skip binary-dependent tests)
-        run: npm test
-        env:
-          KEYSPY_SKIP_DOWNLOAD: true
-
-      - name: Publish to NPM
-        run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

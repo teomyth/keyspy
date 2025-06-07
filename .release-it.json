@@ -12,8 +12,7 @@
     "releaseNotes": null,
     "autoGenerate": true,
     "draft": false,
-    "preRelease": false,
-    "assets": ["bin/**"]
+    "preRelease": false
   },
   "npm": {
     "publish": true,
@@ -22,10 +21,10 @@
     "otp": false
   },
   "hooks": {
-    "before:init": ["pnpm run lint", "pnpm run test"],
-    "after:bump": ["pnpm run build", "pnpm run build:swift"],
-    "before:release": "pnpm run build && pnpm run test",
-    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+    "before:init": ["pnpm run lint"],
+    "after:bump": ["pnpm run build"],
+    "before:release": "pnpm run build",
+    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}. Binaries will be built by GitHub Actions."
   },
   "plugins": {
     "@release-it/conventional-changelog": {
