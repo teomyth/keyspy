@@ -1,6 +1,6 @@
 {
   "name": "keyspy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A cross-platform global keyboard and mouse listener for Node.js",
   "types": "build/index.d.ts",
   "main": "build/index.js",
