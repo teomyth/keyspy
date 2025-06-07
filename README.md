@@ -4,15 +4,31 @@
 
 keyspy is a modern, lightweight library that provides global keyboard and mouse event monitoring across Windows, macOS, and Linux. Unlike other solutions, keyspy uses pre-compiled native binaries and a multi-process architecture for maximum stability and compatibility.
 
-## 🚀 Improvements over Original
+## 🤔 Why keyspy?
 
-This project is a modernized version of [node-global-key-listener](https://github.com/LaunchMenu/node-global-key-listener) with significant enhancements:
+Choosing the right keyboard listener for your Node.js project can be challenging. Here's how keyspy compares to other popular solutions:
+
+| Feature | Electron globalShortcut | IOHook | **keyspy** |
+|---------|-------------------------|---------|------------|
+| **Zero compilation** | ❌ Electron required | ❌ node-gyp required | ✅ Pre-compiled binaries |
+| **Package size** | 🟡 Large (Electron) | 🟡 Medium | ✅ Small (on-demand download) |
+| **System shortcuts** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Event blocking** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **Cross-platform** | ✅ Yes | ✅ Yes | ✅ Yes |
+| **TypeScript** | ✅ Built-in | 🟡 Community types | ✅ Built-in |
+| **Stability** | ✅ Very stable | 🟡 Can crash Node.js | ✅ Multi-process isolation |
+
+### 🎯 **keyspy Advantages**
 
 - **🚀 Zero Setup**: Pre-compiled binaries downloaded automatically, no compilation required
 - **📦 Smaller Package**: Binaries downloaded on-demand (not bundled), reducing package size by ~90%
 - **📱 Universal macOS**: ARM64 + x86_64 universal binaries for all Apple Silicon and Intel Macs
 - **🔄 Modern Stack**: TypeScript, automated testing, and modern development tools
 - **🏗️ Automated Releases**: GitHub Actions handle cross-platform compilation and publishing
+- **🛡️ Stable Architecture**: Multi-process design prevents Node.js crashes
+- **⚡ High Performance**: Optimized native implementations for each platform
+
+> **📚 Project Origin**: keyspy is a modernized version of [node-global-key-listener](https://github.com/LaunchMenu/node-global-key-listener), rebuilt with modern tooling and enhanced features.
 
 ## ✨ Features
 
@@ -119,34 +135,7 @@ yarn add keyspy
 
 The package automatically detects your platform and downloads the appropriate pre-compiled binary during installation. No compilation required!
 
-## 🤔 Why keyspy?
 
-Choosing the right keyboard listener for your Node.js project can be challenging. Here's how keyspy compares to other popular solutions:
-
-| Feature | Electron globalShortcut | IOHook | **keyspy** |
-|---------|------------------------|--------|------------|
-| **Setup Complexity** | Simple | Complex (node-gyp) | **Simple** |
-| **System Shortcuts** | ❌ Limited | ✅ Full | **✅ Full** |
-| **Event Blocking** | ❌ No | ✅ Yes | **✅ Yes** |
-| **Node.js Compatibility** | ❌ Electron only | ⚠️ Version dependent | **✅ All versions** |
-| **Compilation Required** | ❌ No | ❌ Yes | **✅ No** |
-| **Arbitrary Key Support** | ❌ Limited | ⚠️ Limited | **✅ Full** |
-| **Process Architecture** | In-process | In-process | **Multi-process** |
-
-### 🎯 **keyspy Advantages**
-
-- **🔧 Zero Setup**: Pre-compiled binaries work out of the box
-- **🌐 Universal**: Compatible with all Node.js versions (14+)
-- **🔒 System-Level**: Capture any key combination, including OS shortcuts
-- **🛡️ Stable**: Multi-process architecture prevents crashes
-- **📝 TypeScript**: Full type definitions included
-- **🎮 Flexible**: Listen to individual keys or complex combinations
-
-### ⚠️ **Considerations**
-
-- **Permissions**: macOS requires Accessibility permissions
-- **Antivirus**: Some antivirus software may flag the native binaries
-- **Performance**: Small overhead due to inter-process communication
 
 ## 🛠️ Development
 
