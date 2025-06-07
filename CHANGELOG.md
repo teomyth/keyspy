@@ -1,5 +1,7 @@
 
 
+* fix: correct YAML syntax in GitHub Actions workflow (e28e6bc)
+
 ## [1.0.3](https://github.com/teomyth/keyspy/compare/v1.0.2...v1.0.3) (2025-06-07)
 
 * fix: ensure binaries upload to correct GitHub release (541cdec)
