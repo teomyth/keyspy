@@ -1,1 +1,0 @@
-"C:\MinGW\bin\c++.exe" main.cpp -o detectKeys.exe -static-libgcc -static-libstdc++
