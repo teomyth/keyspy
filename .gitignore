@@ -130,9 +130,6 @@ test-results/
 # Turbo
 .turbo/
 
-# Release artifacts
-CHANGELOG.md
-
 # macOS specific
 .DS_Store
 **/.DS_Store
