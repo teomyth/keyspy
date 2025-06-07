@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-set -xe
+set -e
+
+# Check if verbose mode is enabled
+VERBOSE=${VERBOSE:-false}
+if [ "$VERBOSE" = "true" ]; then
+    set -x
+fi
 
 echo "🔨 Starting Linux X11 compilation..."
 

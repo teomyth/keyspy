@@ -1,4 +1,12 @@
 @echo off
+
+REM Check if verbose mode is enabled
+if "%VERBOSE%"=="true" (
+    echo on
+) else (
+    echo off
+)
+
 echo 🔨 Starting Windows compilation...
 
 REM Ensure bin directory exists
