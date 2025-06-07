@@ -5,7 +5,7 @@ import type { IGlobalKeyEvent } from "./_types/IGlobalKeyEvent";
 import { MacGlobalKeyLookup } from "./_data/MacGlobalKeyLookup";
 import Path from "node:path";
 import type { IMacConfig } from "./_types/IMacConfig";
-import sudo from "sudo-prompt";
+import sudo from "@expo/sudo-prompt";
 import { isSpawnEventSupported } from "./isSpawnEventSupported";
 const sPath = "../../bin/MacKeyServer";
 

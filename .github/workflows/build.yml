@@ -37,7 +37,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
       
       - name: Install dependencies
@@ -101,12 +101,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts/
 
-      - name: Package binaries
+      - name: Package binaries and source code
         run: |
           mkdir -p releases/
 
@@ -126,12 +130,13 @@ jobs:
           tar -czf ../../releases/keyspy-win32-x64.tar.gz WinKeyServer.exe
           cd ../../
 
+          # Package source code using git archive (respects .gitignore)
+          echo "📦 Creating source code archive..."
+          git archive --format=tar.gz --prefix=keyspy-${{ steps.version.outputs.VERSION }}/ HEAD > releases/keyspy-source.tar.gz
+          git archive --format=zip --prefix=keyspy-${{ steps.version.outputs.VERSION }}/ HEAD > releases/keyspy-source.zip
+
           echo "📦 Packaged releases:"
           ls -la releases/
-
-      - name: Extract version from tag
-        id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release and Upload Binaries
         uses: softprops/action-gh-release@v1
@@ -153,11 +158,19 @@ jobs:
             - ✅ Windows (x86_64)
 
             Binaries are automatically downloaded during installation.
+
+            ## Downloads
+            - **Pre-compiled binaries**: Platform-specific binaries for direct use
+            - **Source code**: `keyspy-source.tar.gz` (Linux/macOS) or `keyspy-source.zip` (Windows)
+
+            The source code packages include all necessary files to build the project from scratch.
           files: |
             releases/keyspy-darwin-arm64.tar.gz
             releases/keyspy-darwin-x64.tar.gz
             releases/keyspy-linux-x64.tar.gz
             releases/keyspy-win32-x64.tar.gz
+            releases/keyspy-source.tar.gz
+            releases/keyspy-source.zip
           draft: false
           prerelease: false
         env:

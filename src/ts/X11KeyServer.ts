@@ -5,7 +5,7 @@ import type { IGlobalKeyEvent } from "./_types/IGlobalKeyEvent";
 import { X11GlobalKeyLookup } from "./_data/X11GlobalKeyLookup";
 import Path from "node:path";
 import type { IX11Config } from "./_types/IX11Config";
-import sudo from "sudo-prompt";
+import sudo from "@expo/sudo-prompt";
 import { isSpawnEventSupported } from "./isSpawnEventSupported";
 const sPath = "../../bin/X11KeyServer";
 
