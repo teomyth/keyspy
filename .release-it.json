@@ -1,0 +1,36 @@
+{
+  "git": {
+    "commitMessage": "chore: release v${version}",
+    "tagName": "v${version}",
+    "requireCleanWorkingDir": true,
+    "requireBranch": ["main", "master"],
+    "addUntrackedFiles": false
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Release v${version}",
+    "releaseNotes": null,
+    "autoGenerate": true,
+    "draft": false,
+    "preRelease": false,
+    "assets": ["bin/**"]
+  },
+  "npm": {
+    "publish": true,
+    "publishPath": ".",
+    "access": "public",
+    "otp": false
+  },
+  "hooks": {
+    "before:init": ["pnpm run lint", "pnpm run test"],
+    "after:bump": ["pnpm run build", "pnpm run build:swift"],
+    "before:release": "pnpm run build && pnpm run test",
+    "after:release": "echo Successfully released ${name} v${version} to ${repo.repository}."
+  },
+  "plugins": {
+    "@release-it/conventional-changelog": {
+      "preset": "angular",
+      "infile": "CHANGELOG.md"
+    }
+  }
+}

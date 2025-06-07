@@ -1,0 +1,53 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.ts", "src/**/*.js", "tsconfig.json", "package.json"],
+      "outputs": ["build/**", "dist/**"]
+    },
+    "build:swift": {
+      "inputs": ["src/bin/**/*.swift"],
+      "outputs": ["bin/**"]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "tests/**/*.ts"],
+      "outputs": ["test-reports/**", "coverage/**"]
+    },
+    "test:unit": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.ts", "tests/unit/**/*.ts"],
+      "outputs": ["test-reports/**", "coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["build", "build:swift"],
+      "inputs": ["src/**/*.ts", "tests/integration/**/*.ts", "bin/**"],
+      "outputs": ["test-reports/**"]
+    },
+    "lint": {
+      "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],
+      "outputs": []
+    },
+    "format": {
+      "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],
+      "outputs": []
+    },
+    "format:check": {
+      "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}
