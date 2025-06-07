@@ -16,9 +16,9 @@
     "otp": false
   },
   "hooks": {
-    "before:init": ["pnpm run lint"],
-    "after:bump": ["pnpm run build"],
-    "before:release": "pnpm run build",
+    "before:init": ["npm run lint"],
+    "after:bump": ["npm run build"],
+    "before:release": "npm run build",
     "after:release": "echo Successfully released ${name} v${version} to NPM. GitHub Release and binaries will be created by GitHub Actions."
   },
   "plugins": {

@@ -190,6 +190,12 @@ npm run lint         # Check code quality with Biome
 npm run lint:fix     # Auto-fix issues
 npm run format       # Format code
 npm run clean        # Remove build artifacts
+
+# Release management
+npm run release:patch    # Bump patch version (1.0.0 → 1.0.1)
+npm run release:minor    # Bump minor version (1.0.0 → 1.1.0)
+npm run release:major    # Bump major version (1.0.0 → 2.0.0)
+npm run release:dry      # Preview release without publishing
 ```
 
 ### Testing

@@ -27,7 +27,10 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run build && npm run test",
     "release": "release-it",
-    "release:dry": "release-it --dry-run"
+    "release:dry": "release-it --dry-run",
+    "release:patch": "release-it patch",
+    "release:minor": "release-it minor",
+    "release:major": "release-it major"
   },
   "repository": {
     "type": "git",
