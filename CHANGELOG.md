@@ -1,4 +1,11 @@
+# Changelog
 
+## [1.0.7](https://github.com/teomyth/keyspy/compare/v1.0.6...v1.0.7) (2025-06-07)
+
+
+### Features
+
+* add source code packaging to GitHub releases ([d8f3198](https://github.com/teomyth/keyspy/commit/d8f31985bc838450843244c82f9244ac9ac94d5a))
 
 ## [1.0.6](https://github.com/teomyth/keyspy/compare/v1.0.5...v1.0.6) (2025-06-07)
 
