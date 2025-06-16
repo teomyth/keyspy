@@ -1,14 +1,32 @@
 // Jest globals are available without import
 import { GlobalKeyboardListener } from "../../src/index";
-import type { IGlobalKeyEvent } from "../../src/ts/_types/IGlobalKeyEvent";
-import type { IGlobalKeyDownMap } from "../../src/ts/_types/IGlobalKeyDownMap";
+import type { IGlobalKeyEvent } from "../../src/types/IGlobalKeyEvent";
+import type { IGlobalKeyDownMap } from "../../src/types/IGlobalKeyDownMap";
+import { checkPermissions, getPermissionInstructions } from "../../src/utils/permissions";
 
 describe("GlobalKeyboardListener Integration", () => {
   let listener: GlobalKeyboardListener;
   let events: IGlobalKeyEvent[] = [];
   let downMaps: IGlobalKeyDownMap[] = [];
+  let hasPermissions = false;
+
+  beforeAll(async () => {
+    // Check permissions once before all tests
+    hasPermissions = await checkPermissions();
+
+    if (!hasPermissions) {
+      console.warn("\n⚠️  Permission Check Failed");
+      console.warn("The following tests may fail due to missing permissions:");
+      console.warn(getPermissionInstructions());
+      console.warn("You can skip these tests by setting SKIP_INTEGRATION_TESTS=true");
+    }
+  });
 
   beforeEach(() => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
+
     events = [];
     downMaps = [];
     listener = new GlobalKeyboardListener({
@@ -34,19 +52,32 @@ describe("GlobalKeyboardListener Integration", () => {
   });
 
   it("should create a GlobalKeyboardListener instance", () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
     expect(listener).toBeDefined();
     expect(listener).toBeInstanceOf(GlobalKeyboardListener);
   });
 
   it("should have addListener method", () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
     expect(typeof listener.addListener).toBe("function");
   });
 
   it("should have kill method", () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
     expect(typeof listener.kill).toBe("function");
   });
 
   it("should accept a listener function", async () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
+
     const listenerPromise = listener.addListener(
       (event: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {
         events.push(event);
@@ -65,6 +96,10 @@ describe("GlobalKeyboardListener Integration", () => {
   });
 
   it("should handle listener errors gracefully", async () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
+
     const errorListener = () => {
       throw new Error("Test error");
     };
@@ -74,6 +109,10 @@ describe("GlobalKeyboardListener Integration", () => {
   });
 
   it("should validate event structure when events are received", async () => {
+    if (process.env.SKIP_INTEGRATION_TESTS === "true") {
+      return;
+    }
+
     let eventReceived = false;
 
     await listener.addListener((event: IGlobalKeyEvent, down: IGlobalKeyDownMap) => {

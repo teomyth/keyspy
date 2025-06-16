@@ -1,7 +1,7 @@
 // Jest globals are available without import
-import { MacGlobalKeyLookup } from "../../src/ts/_data/MacGlobalKeyLookup";
-import { WinGlobalKeyLookup } from "../../src/ts/_data/WinGlobalKeyLookup";
-import { X11GlobalKeyLookup } from "../../src/ts/_data/X11GlobalKeyLookup";
+import { MacGlobalKeyLookup } from "../../src/platforms/mac/keymap";
+import { WinGlobalKeyLookup } from "../../src/platforms/windows/keymap";
+import { X11GlobalKeyLookup } from "../../src/platforms/linux/keymap";
 
 describe("Key Lookup Tables", () => {
   describe("MacGlobalKeyLookup", () => {

@@ -69,7 +69,7 @@ keyspy.addListener((e, down) => {
 git clone https://github.com/teomyth/keyspy.git
 cd keyspy
 npm install
-npm run monit           # General key monitoring with clean table output
+npm run cli             # General key monitoring with clean table output
 ```
 
 The test tool will show real-time key detection for all keyboard and mouse events.
@@ -83,7 +83,7 @@ The test tool will show real-time key detection for all keyboard and mouse event
 
 ### Sample Output
 
-When you run `npm run monit`, you'll see a clean, real-time table like this:
+When you run `npm run cli`, you'll see a clean, real-time table like this:
 
 **Default output (KEYSPY_DEBUG=0 - clean table format):**
 ```
@@ -153,15 +153,22 @@ keyspy.addListener((e, down) => {
 
 ```ts
 const keyspy = new GlobalKeyboardListener({
+    // Global app name for permission requests (default: "KeySpy")
+    appName: "My Awesome App",
+
     windows: {
         onError: (errorCode) => console.error("Windows error:", errorCode),
         onInfo: (info) => console.info("Windows info:", info)
     },
     mac: {
         onError: (errorCode) => console.error("macOS error:", errorCode),
+        // Platform-specific app name (overrides global appName)
+        appName: "My Mac App"
     },
     x11: {
         onError: (errorCode) => console.error("Linux error:", errorCode),
+        // Platform-specific app name (overrides global appName)
+        appName: "My Linux App"
     }
 });
 ```
@@ -205,7 +212,7 @@ npm run build:native
 npm run dev          # TypeScript watch mode
 npm run build        # Production build
 npm test             # Run all tests
-npm run monit        # Interactive testing with clean table output
+npm run cli          # Interactive testing with clean table output
 ```
 
 ### Building Native Binaries
@@ -244,13 +251,25 @@ npm run release:dry      # Preview release without publishing
 
 ```bash
 npm run test:unit        # Unit tests
-npm run test:integration # Integration tests
-npm run monit            # Manual interactive testing with clean table output
+npm run test:integration # Integration tests (may prompt for permissions)
+npm run test:integration:safe # Check permissions first, then run integration tests
+npm run check-permissions # Check if permissions are granted
+npm run dev:cli          # Manual interactive testing with clean table output
 
-# Debug levels for monit tool
-KEYSPY_DEBUG=0 npm run monit  # Clean table output only (default)
-KEYSPY_DEBUG=1 npm run monit  # + UNKNOWN key detection
-KEYSPY_DEBUG=2 npm run monit  # + All debug info (reserved for future use)
+# Verbose levels for CLI tool
+npm run cli              # Clean table output only (default)
+npm run cli:v            # + UNKNOWN key detection (-v)
+npm run cli:vv           # + All debug information (-vv)
+npm run cli:vvv          # + Detailed debug info (-vvv)
+
+# Or use environment variable
+KEYSPY_DEBUG=0 npm run cli         # Clean table output only (default)
+KEYSPY_DEBUG=1 npm run cli         # + UNKNOWN key detection
+KEYSPY_DEBUG=2 npm run cli         # + All debug information
+KEYSPY_DEBUG=3 npm run cli         # + Detailed debug info
+
+# Skip integration tests if permissions are not available
+SKIP_INTEGRATION_TESTS=true npm test
 ```
 
 ## 📋 API Reference
@@ -279,6 +298,36 @@ interface IGlobalKeyEvent {
   vKey: number;           // Virtual key code
   scanCode: number;       // Scan code
   location: [number, number]; // Mouse location (for mouse events)
+}
+```
+
+#### Configuration Options
+
+```ts
+interface IConfig {
+  appName?: string;        // Default app name for permission requests (default: "KeySpy")
+  disposeDelay?: number;   // Delay before disposing server when no listeners (default: 100ms)
+
+  // Platform-specific configurations
+  windows?: {
+    onError?: (errorCode: number) => void;
+    onInfo?: (info: string) => void;
+    serverPath?: string;   // Custom path to Windows binary
+  };
+
+  mac?: {
+    onError?: (errorCode: number | null) => void;
+    onInfo?: (info: string) => void;
+    serverPath?: string;   // Custom path to macOS binary
+    appName?: string;      // macOS-specific app name (overrides global appName)
+  };
+
+  x11?: {
+    onError?: (errorCode: number | null) => void;
+    onInfo?: (info: string) => void;
+    serverPath?: string;   // Custom path to Linux binary
+    appName?: string;      // Linux-specific app name (overrides global appName)
+  };
 }
 ```
 
