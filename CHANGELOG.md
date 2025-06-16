@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/teomyth/keyspy/compare/v1.1.0...v1.1.1) (2025-06-16)
+
+
+### Bug Fixes
+
+* update dependencies to include cli-table3 ([236ad46](https://github.com/teomyth/keyspy/commit/236ad46dca386963044ebfc375fe1def6626ec6f))
+
 # [1.1.0](https://github.com/teomyth/keyspy/compare/v1.0.7...v1.1.0) (2025-06-16)
 
 
