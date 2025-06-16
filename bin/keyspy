@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const fs = require('fs');
+
+// Get the directory where this script is located
+const binDir = __dirname;
+// Get the package root directory (parent of bin/)
+const packageRoot = path.dirname(binDir);
+// Path to the compiled CLI script
+const cliScript = path.join(packageRoot, 'dist', 'cli.js');
+
+// Check if the compiled CLI script exists
+if (!fs.existsSync(cliScript)) {
+  console.error('Error: CLI script not found at', cliScript);
+  console.error('Please run "npm run build" first to compile the TypeScript code.');
+  process.exit(1);
+}
+
+// Execute the CLI script
+const { run } = require(cliScript);
+
+// Call the run function with command line arguments
+run({}, process.argv);
