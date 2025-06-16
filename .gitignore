@@ -116,6 +116,7 @@ dist
 
 build/
 dist/
+runtime/
 
 # Legacy files
 eslintLog.tap
@@ -123,6 +124,7 @@ eslintLog.tap
 # Test results and coverage
 coverage/
 test-results/
+junit.xml
 
 # Turbo
 .turbo/

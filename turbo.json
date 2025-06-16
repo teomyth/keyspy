@@ -9,32 +9,32 @@
     },
     "build:native": {
       "inputs": [
-        "src/bin/**/*",
+        "native/**/*",
         "scripts/build-native.js",
         "scripts/compile-*.sh",
         "scripts/compile-*.bat"
       ],
-      "outputs": ["bin/**"]
+      "outputs": ["build/**"]
     },
     "test": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "tests/**/*.ts"],
-      "outputs": ["test-results/**"]
+      "outputs": ["junit.xml"]
     },
     "test:unit": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "tests/unit/**/*.ts"],
-      "outputs": ["test-results/**"]
+      "outputs": ["junit.xml"]
     },
     "test:coverage": {
       "dependsOn": ["build"],
       "inputs": ["src/**/*.ts", "tests/**/*.ts"],
-      "outputs": ["coverage/**", "test-results/**"]
+      "outputs": ["coverage/**", "junit.xml"]
     },
     "test:integration": {
       "dependsOn": ["build", "build:native"],
-      "inputs": ["src/**/*.ts", "tests/integration/**/*.ts", "bin/**"],
-      "outputs": ["test-results/**"]
+      "inputs": ["src/**/*.ts", "tests/integration/**/*.ts", "build/**"],
+      "outputs": ["junit.xml"]
     },
     "lint": {
       "inputs": ["src/**/*.ts", "src/**/*.js", "tests/**/*.ts", "biome.json"],

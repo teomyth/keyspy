@@ -17,15 +17,15 @@ jobs:
         include:
           - os: windows-latest
             platform: win32
-            binary: bin/WinKeyServer.exe
+            binary: build/WinKeyServer.exe
             artifact: windows-binary
           - os: macos-latest
             platform: darwin
-            binary: bin/MacKeyServer
+            binary: build/MacKeyServer
             artifact: macos-binary
           - os: ubuntu-latest
             platform: linux
-            binary: bin/X11KeyServer
+            binary: build/X11KeyServer
             artifact: linux-binary
     
     runs-on: ${{ matrix.os }}
@@ -43,8 +43,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Create bin directory
-        run: mkdir -p bin
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Create build directory
+        run: mkdir -p build
         shell: bash
 
       - name: Install Linux dependencies
@@ -175,5 +178,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
