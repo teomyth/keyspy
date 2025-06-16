@@ -1,5 +1,19 @@
 # Changelog
 
+# [1.1.0](https://github.com/teomyth/keyspy/compare/v1.0.7...v1.1.0) (2025-06-16)
+
+
+### Bug Fixes
+
+* resolve linting issues ([772c782](https://github.com/teomyth/keyspy/commit/772c7824e076bcf6d9508cf46252ab9318b1d794))
+
+
+### Features
+
+* add new organized project structure ([a5f9b5c](https://github.com/teomyth/keyspy/commit/a5f9b5cc0b96ab2b95808f75cd55cd7741a19f91))
+* optimize monit tool with Unicode symbols and improved table layout ([c71c9ac](https://github.com/teomyth/keyspy/commit/c71c9ac4b889af67d263acb187c2ecc7d2828410))
+* update core application code ([b4557e8](https://github.com/teomyth/keyspy/commit/b4557e8e36215a945975128673cf4cb9b30dfa82))
+
 ## [1.0.7](https://github.com/teomyth/keyspy/compare/v1.0.6...v1.0.7) (2025-06-07)
 
 

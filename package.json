@@ -1,6 +1,6 @@
 {
   "name": "keyspy",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "A cross-platform global keyboard and mouse listener for Node.js",
   "keywords": [
     "cross-platform",
@@ -31,7 +31,15 @@
   "bin": {
     "keyspy": "bin/keyspy"
   },
-  "files": ["dist/**/*", "bin/**/*", "native/**/*", "runtime/**/*", "scripts/download-binaries.js", "README.md", "LICENSE"],
+  "files": [
+    "dist/**/*",
+    "bin/**/*",
+    "native/**/*",
+    "runtime/**/*",
+    "scripts/download-binaries.js",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "build:native": "node scripts/build-native.js",
