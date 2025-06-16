@@ -73,14 +73,14 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@expo/sudo-prompt": "^9.3.2"
+    "@expo/sudo-prompt": "^9.3.2",
+    "cli-table3": "^0.6.5"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@release-it/conventional-changelog": "^10.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
-    "cli-table3": "^0.6.5",
     "jest": "^30.0.0",
     "jest-junit": "^16.0.0",
     "release-it": "^19.0.3",
