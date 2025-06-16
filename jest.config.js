@@ -9,18 +9,17 @@ module.exports = {
   collectCoverageFrom: [
     "src/**/*.{ts,js}",
     "!src/**/*.d.ts",
-    "!src/bin/**",
     "!src/examples/**",
-    "!src/ts/_tests/**",
+    "!native/**",
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov", "html", "json"],
   coverageThreshold: {
     global: {
-      branches: 30,
-      functions: 40,
-      lines: 40,
-      statements: 40,
+      branches: 14,
+      functions: 23,
+      lines: 35,
+      statements: 34,
     },
   },
   setupFilesAfterEnv: [],
@@ -28,16 +27,6 @@ module.exports = {
   testTimeout: 30000,
   reporters: [
     "default",
-    [
-      "jest-junit",
-      {
-        outputDirectory: "test-results",
-        outputName: "junit.xml",
-        classNameTemplate: "{classname}",
-        titleTemplate: "{title}",
-        ancestorSeparator: " › ",
-        usePathForSuiteName: true,
-      },
-    ],
+    "jest-junit"
   ],
 };

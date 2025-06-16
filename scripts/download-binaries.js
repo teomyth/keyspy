@@ -99,13 +99,13 @@ async function downloadAndExtract() {
   try {
     const { file: binaryFile, archive } = getPlatformInfo();
 
-    // Create bin directory
-    const binDir = path.join(__dirname, "..", "bin");
-    if (!fs.existsSync(binDir)) {
-      fs.mkdirSync(binDir, { recursive: true });
+    // Create runtime directory for downloaded binaries
+    const runtimeDir = path.join(__dirname, "..", "runtime");
+    if (!fs.existsSync(runtimeDir)) {
+      fs.mkdirSync(runtimeDir, { recursive: true });
     }
 
-    const binaryPath = path.join(binDir, binaryFile);
+    const binaryPath = path.join(runtimeDir, binaryFile);
 
     // Check if binary already exists
     if (fs.existsSync(binaryPath)) {
@@ -115,7 +115,7 @@ async function downloadAndExtract() {
 
     // Download URL
     const downloadUrl = `https://github.com/teomyth/keyspy/releases/download/v${version}/${archive}`;
-    const archivePath = path.join(binDir, archive);
+    const archivePath = path.join(runtimeDir, archive);
 
     log(`Platform: ${platform}-${arch}`);
     log(`Binary: ${binaryFile}`);
@@ -126,7 +126,7 @@ async function downloadAndExtract() {
       log(`Downloaded: ${archive}`);
 
       // Extract archive
-      if (extractTarGz(archivePath, binDir)) {
+      if (extractTarGz(archivePath, runtimeDir)) {
         log(`Extracted: ${archive}`);
 
         // Make binary executable (Unix systems)

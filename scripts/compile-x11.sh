@@ -9,28 +9,28 @@ fi
 
 echo "🔨 Starting Linux X11 compilation..."
 
-# Ensure bin directory exists
-echo "📁 Creating bin directory..."
-mkdir -p bin
+# Ensure build directory exists
+echo "📁 Creating build directory..."
+mkdir -p build
 
 # Check if source file exists
-if [ ! -f "src/bin/X11KeyServer/main.cpp" ]; then
-    echo "❌ Source file not found: src/bin/X11KeyServer/main.cpp"
+if [ ! -f "native/X11KeyServer/main.cpp" ]; then
+    echo "❌ Source file not found: native/X11KeyServer/main.cpp"
     exit 1
 fi
 
 # Compile the X11 key server
 echo "🔨 Compiling X11KeyServer..."
-c++ src/bin/X11KeyServer/main.cpp -o bin/X11KeyServer -lX11 -lXi -static-libgcc -static-libstdc++
+c++ native/X11KeyServer/main.cpp -o build/X11KeyServer -lX11 -lXi -static-libgcc -static-libstdc++
 
 # Verify the binary was created
-if [ -f "bin/X11KeyServer" ]; then
+if [ -f "build/X11KeyServer" ]; then
     echo "✅ Binary created successfully"
-    ls -la bin/X11KeyServer
+    ls -la build/X11KeyServer
 
     # Strip the binary to reduce size
     echo "🧹 Stripping binary..."
-    strip bin/X11KeyServer
+    strip build/X11KeyServer
 
     echo "✅ Linux X11 compilation completed successfully!"
 else

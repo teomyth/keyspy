@@ -2,7 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "rootDir": "src/",
-    "outDir": "build/",
+    "outDir": "dist/",
     "inlineSourceMap": true,
     "declaration": true,
     "declarationMap": true,
@@ -21,8 +21,8 @@
   "exclude": [
     "node_modules",
     "**/node_modules/*",
-    "build",
     "dist",
+    "build",
     "trash",
     "tests",
     "test-reports",

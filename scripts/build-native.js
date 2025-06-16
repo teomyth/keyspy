@@ -75,11 +75,11 @@ function checkDependencies() {
 function buildForCurrentPlatform() {
   log(`🔨 Building for ${platform}-${arch}...`);
 
-  // Ensure bin directory exists
-  const binDir = path.join(__dirname, "..", "bin");
-  if (!fs.existsSync(binDir)) {
-    fs.mkdirSync(binDir, { recursive: true });
-    log("📁 Created bin directory");
+  // Ensure build directory exists
+  const buildDir = path.join(__dirname, "..", "build");
+  if (!fs.existsSync(buildDir)) {
+    fs.mkdirSync(buildDir, { recursive: true });
+    log("📁 Created build directory");
   }
 
   // Check if --verbose flag is passed
