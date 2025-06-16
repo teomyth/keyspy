@@ -52,6 +52,11 @@ describe("Key Lookup Tables", () => {
         }
       }
     });
+
+    it("should handle missing keys gracefully", () => {
+      // Test that missing keys return undefined (will be handled by KeyServer)
+      expect(MacGlobalKeyLookup[0x9999]).toBeUndefined();
+    });
   });
 
   describe("WinGlobalKeyLookup", () => {

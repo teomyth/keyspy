@@ -47,6 +47,8 @@ Choosing the right keyboard listener for your Node.js project can be challenging
 | macOS    | ✅ Full | Swift (CGEventTap) | macOS 10.14+ |
 | Linux    | ✅ X11 Only | C++ (XInput2) | Ubuntu, Arch Linux |
 
+
+
 ## 🚀 Quick Start
 
 ```ts
@@ -59,6 +61,57 @@ keyspy.addListener((e, down) => {
     console.log(`${e.name} ${e.state} [${e.rawKey._nameRaw}]`);
 });
 ```
+
+## 🔍 Testing Your Setup
+
+```bash
+# Clone and test
+git clone https://github.com/teomyth/keyspy.git
+cd keyspy
+npm install
+npm run monit           # General key monitoring with clean table output
+```
+
+The test tool will show real-time key detection for all keyboard and mouse events.
+
+**Features:**
+- ✅ Clean, aligned table output (no terminal echo interference)
+- ✅ Real-time event detection with optimized column widths
+- ✅ Standard Unicode symbols for modifier keys (⇧⌃⌥⌘)
+- ✅ Detailed key information (name, code, modifiers, location)
+- ✅ Cross-platform compatibility
+
+### Sample Output
+
+When you run `npm run monit`, you'll see a clean, real-time table like this:
+
+**Default output (KEYSPY_DEBUG=0 - clean table format):**
+```
+=== keyspy Key Monitor ===
+Real-time keyboard and mouse event detection
+Debug level: 0
+Exit: ESC, Ctrl+C, or CMD+Q
+==========================================
+
+#     Time       State Key Name           Mods           Raw Key                Loc            vKey
+#1    14:32:16   DN    F3                                kVK_F3                 0.0,0.0        0x63
+#2    14:32:16   UP    F3                                kVK_F3                 0.0,0.0        0x63
+#3    14:32:17   DN    A                                 kVK_ANSI_A             0.0,0.0        0x00
+#4    14:32:17   UP    A                                 kVK_ANSI_A             0.0,0.0        0x00
+#5    14:32:18   DN    SPACE              ⌘              kVK_Space              0.0,0.0        0x31
+#6    14:32:19   DN    MOUSE LEFT                        CGMouseButton.left     245.7,156.3    0x00
+#7    14:32:20   DN    C                  ⇧+⌃+⌥+⌘        kVK_ANSI_C             0.0,0.0        0x08
+#8    14:32:21   DN    UNKNOWN                           UNKNOWN_0xA0           0.0,0.0        0xA0
+```
+
+**Debug output (KEYSPY_DEBUG=1 - with unknown key detection):**
+```
+#8    14:32:21   DN    UNKNOWN                           UNKNOWN_0xA0           0.0,0.0        0xA0
+❓ UNKNOWN key detected - vKey: 0xA0, Raw: UNKNOWN_0xA0
+   This key is not in our lookup table but was captured successfully
+```
+
+Some keys may appear as `UNKNOWN` if they're not in our lookup tables, but you'll still get the key code (vKey) to identify them.
 
 ## 📖 Usage Examples
 
@@ -152,7 +205,7 @@ npm run build:native
 npm run dev          # TypeScript watch mode
 npm run build        # Production build
 npm test             # Run all tests
-npm run test:manual  # Interactive testing
+npm run monit        # Interactive testing with clean table output
 ```
 
 ### Building Native Binaries
@@ -192,7 +245,12 @@ npm run release:dry      # Preview release without publishing
 ```bash
 npm run test:unit        # Unit tests
 npm run test:integration # Integration tests
-npm run test:manual      # Manual interactive testing
+npm run monit            # Manual interactive testing with clean table output
+
+# Debug levels for monit tool
+KEYSPY_DEBUG=0 npm run monit  # Clean table output only (default)
+KEYSPY_DEBUG=1 npm run monit  # + UNKNOWN key detection
+KEYSPY_DEBUG=2 npm run monit  # + All debug info (reserved for future use)
 ```
 
 ## 📋 API Reference

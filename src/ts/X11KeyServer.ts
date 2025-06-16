@@ -7,6 +7,7 @@ import Path from "node:path";
 import type { IX11Config } from "./_types/IX11Config";
 import sudo from "@expo/sudo-prompt";
 import { isSpawnEventSupported } from "./isSpawnEventSupported";
+import { resolveUnknownKey } from "./common";
 const sPath = "../../bin/X11KeyServer";
 
 /** Use this class to listen to key events on X11 */
@@ -155,12 +156,13 @@ export class X11KeyServer implements IGlobalKeyServer {
       const locationY = Number.parseFloat(sLocationY);
 
       const key = X11GlobalKeyLookup[isMouse ? 0xffff0000 + keyCode : keyCode - 8];
+      const resolvedKey = resolveUnknownKey(key, keyCode);
 
       return {
         event: {
           vKey: keyCode,
-          rawKey: key,
-          name: key?.standardName,
+          rawKey: resolvedKey,
+          name: resolvedKey.standardName,
           state: isDown ? "DOWN" : "UP",
           scanCode: keyCode,
           location: [locationX, locationY],

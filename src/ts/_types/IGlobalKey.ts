@@ -127,4 +127,5 @@ export type IGlobalKey =
   | IKeySpecials
   | IKeyNumpad
   | IScrollKeys
-  | IKeyRareUse;
+  | IKeyRareUse
+  | "UNKNOWN";

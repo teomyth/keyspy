@@ -5,6 +5,7 @@ import type { IGlobalKeyListenerRaw } from "./_types/IGlobalKeyListenerRaw";
 import { WinGlobalKeyLookup } from "./_data/WinGlobalKeyLookup";
 import Path from "node:path";
 import type { IWindowsConfig } from "./_types/IWindowsConfig";
+import { resolveUnknownKey } from "./common";
 import { isSpawnEventSupported } from "./isSpawnEventSupported";
 const sPath = "../../bin/WinKeyServer.exe";
 
@@ -80,12 +81,13 @@ export class WinKeyServer implements IGlobalKeyServer {
       const locationY = Number.parseFloat(sLocationY);
 
       const key = WinGlobalKeyLookup[keyCode];
+      const resolvedKey = resolveUnknownKey(key, keyCode);
 
       return {
         event: {
           vKey: keyCode,
-          rawKey: key,
-          name: key?.standardName,
+          rawKey: resolvedKey,
+          name: resolvedKey.standardName,
           state: isDown ? "DOWN" : "UP",
           scanCode: scanCode,
           location: [locationX, locationY],

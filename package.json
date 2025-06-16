@@ -2,54 +2,6 @@
   "name": "keyspy",
   "version": "1.0.7",
   "description": "A cross-platform global keyboard and mouse listener for Node.js",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
-  "files": [
-    "build/**/*",
-    "scripts/download-binaries.js",
-    "README.md",
-    "LICENSE"
-  ],
-  "scripts": {
-    "build": "tsc",
-    "build:native": "node scripts/build-native.js",
-    "clean": "rm -rf build dist coverage test-results .turbo",
-    "dev": "tsc --watch",
-    "format": "biome format --write .",
-    "format:check": "biome format .",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
-    "postinstall": "node scripts/download-binaries.js",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run build && npm run test",
-    "release": "release-it",
-    "release:dry": "release-it --dry-run",
-    "release:major": "release-it major",
-    "release:minor": "release-it minor",
-    "release:patch": "release-it patch",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
-    "test:integration": "jest tests/integration",
-    "test:manual": "npx ts-node examples/manual-test.ts",
-    "test:unit": "jest tests/unit",
-    "test:watch": "jest --watch"
-  },
-  "dependencies": {
-    "@expo/sudo-prompt": "^9.3.2"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@release-it/conventional-changelog": "^10.0.1",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.15.30",
-    "jest": "^29.7.0",
-    "jest-junit": "^16.0.0",
-    "release-it": "^19.0.3",
-    "ts-jest": "^29.3.4",
-    "ts-node": "^10.9.2",
-    "turbo": "^2.5.4",
-    "typescript": "^5.8.3"
-  },
   "keywords": [
     "cross-platform",
     "global",
@@ -60,7 +12,9 @@
     "monitor",
     "mouse",
     "node",
-    "spy"
+    "spy",
+    "macos",
+    "function-keys"
   ],
   "author": "teomyth",
   "license": "MIT",
@@ -72,6 +26,50 @@
     "url": "https://github.com/teomyth/keyspy/issues"
   },
   "homepage": "https://github.com/teomyth/keyspy#readme",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": ["build/**/*", "scripts/download-binaries.js", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc",
+    "build:native": "node scripts/build-native.js",
+    "clean": "rm -rf build dist coverage test-results .turbo",
+    "dev": "tsc --watch",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "monit": "./node_modules/.bin/ts-node tools/monit.ts",
+    "postinstall": "node scripts/download-binaries.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build && npm run test",
+    "release": "release-it",
+    "release:dry": "release-it --dry-run",
+    "release:major": "release-it major",
+    "release:minor": "release-it minor",
+    "release:patch": "release-it patch",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "test:integration": "jest tests/integration",
+    "test:unit": "jest tests/unit",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@expo/sudo-prompt": "^9.3.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@release-it/conventional-changelog": "^10.0.1",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.15.30",
+    "cli-table3": "^0.6.5",
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "release-it": "^19.0.3",
+    "ts-jest": "^29.3.4",
+    "ts-node": "^10.9.2",
+    "turbo": "^2.5.4",
+    "typescript": "^5.8.3"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

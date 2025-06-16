@@ -7,6 +7,7 @@ import Path from "node:path";
 import type { IMacConfig } from "./_types/IMacConfig";
 import sudo from "@expo/sudo-prompt";
 import { isSpawnEventSupported } from "./isSpawnEventSupported";
+import { resolveUnknownKey } from "./common";
 const sPath = "../../bin/MacKeyServer";
 
 /** Use this class to listen to key events on Mac OS */
@@ -155,12 +156,13 @@ export class MacKeyServer implements IGlobalKeyServer {
       const locationY = Number.parseFloat(sLocationY);
 
       const key = MacGlobalKeyLookup[isMouse ? 0xffff0000 + keyCode : keyCode];
+      const resolvedKey = resolveUnknownKey(key, keyCode);
 
       return {
         event: {
           vKey: keyCode,
-          rawKey: key,
-          name: key?.standardName,
+          rawKey: resolvedKey,
+          name: resolvedKey.standardName,
           state: isDown ? "DOWN" : "UP",
           scanCode: keyCode,
           location: [locationX, locationY],
