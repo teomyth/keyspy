@@ -42,7 +42,7 @@ async function checkMacOSPermissions(): Promise<boolean> {
     
     const { stdout } = await execFileAsync("osascript", ["-e", script]);
     return stdout.trim() === "true";
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -55,7 +55,7 @@ async function checkLinuxPermissions(): Promise<boolean> {
     // Check if we can access X11 display
     const { stdout } = await execFileAsync("xdpyinfo", ["-display", process.env.DISPLAY || ":0"]);
     return stdout.includes("screen #0");
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
@@ -67,9 +67,9 @@ async function checkWindowsPermissions(): Promise<boolean> {
   // Windows typically doesn't require special permissions for low-level hooks
   // in user mode, but we can check if we're running as administrator
   try {
-    const { stdout } = await execFileAsync("net", ["session"], { timeout: 5000 });
+    await execFileAsync("net", ["session"], { timeout: 5000 });
     return true; // If this succeeds, we have admin rights
-  } catch (error) {
+  } catch (_error) {
     // Even without admin rights, user-level hooks usually work
     return true;
   }

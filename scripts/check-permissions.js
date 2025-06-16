@@ -6,7 +6,7 @@
  */
 
 const { checkPermissions, getPermissionInstructions } = require('../dist/utils/permissions');
-const os = require('os');
+const os = require('node:os');
 
 async function main() {
   console.log('🔍 Checking KeySpy permissions...\n');
