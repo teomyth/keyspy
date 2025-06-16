@@ -1,20 +1,20 @@
 import os from "node:os";
-import { MacKeyServer } from "./ts/MacKeyServer";
-import { WinKeyServer } from "./ts/WinKeyServer";
-import { X11KeyServer } from "./ts/X11KeyServer";
-import type { IConfig } from "./ts/_types/IConfig";
-import type { IGlobalKeyDownMap } from "./ts/_types/IGlobalKeyDownMap";
-import type { IGlobalKeyListener } from "./ts/_types/IGlobalKeyListener";
-import type { IGlobalKeyListenerRaw } from "./ts/_types/IGlobalKeyListenerRaw";
-import type { IGlobalKeyServer } from "./ts/_types/IGlobalKeyServer";
+import { MacKeyServer } from "./platforms/mac";
+import { WinKeyServer } from "./platforms/windows";
+import { X11KeyServer } from "./platforms/linux";
+import type { IConfig } from "./types/IConfig";
+import type { IGlobalKeyDownMap } from "./types/IGlobalKeyDownMap";
+import type { IGlobalKeyListener } from "./types/IGlobalKeyListener";
+import type { IGlobalKeyListenerRaw } from "./types/IGlobalKeyListenerRaw";
+import type { IGlobalKeyServer } from "./types/IGlobalKeyServer";
 
-export * from "./ts/_types/IGlobalKeyListener";
-export * from "./ts/_types/IGlobalKeyEvent";
-export * from "./ts/_types/IGlobalKey";
-export * from "./ts/_types/IGlobalKeyDownMap";
-export * from "./ts/_types/IWindowsConfig";
-export * from "./ts/_types/IConfig";
-export * from "./ts/_types/IGlobalKeyResult";
+export * from "./types/IGlobalKeyListener";
+export * from "./types/IGlobalKeyEvent";
+export * from "./types/IGlobalKey";
+export * from "./types/IGlobalKeyDownMap";
+export * from "./types/IWindowsConfig";
+export * from "./types/IConfig";
+export * from "./types/IGlobalKeyResult";
 
 /**
  * A cross-platform global keyboard listener. Ideal for setting up global keyboard shortcuts
@@ -49,10 +49,16 @@ export class GlobalKeyboardListener {
         this.keyServer = new WinKeyServer(this.baseListener, config.windows);
         break;
       case "darwin":
-        this.keyServer = new MacKeyServer(this.baseListener, config.mac);
+        this.keyServer = new MacKeyServer(this.baseListener, {
+          ...config.mac,
+          appName: config.mac?.appName || config.appName,
+        });
         break;
       case "linux":
-        this.keyServer = new X11KeyServer(this.baseListener, config.x11);
+        this.keyServer = new X11KeyServer(this.baseListener, {
+          ...config.x11,
+          appName: config.x11?.appName || config.appName,
+        });
         break;
       default:
         throw Error("This OS is not supported");
